@@ -1,0 +1,40 @@
+{
+  "name": "English Premier League 2014/15",
+  "rounds":
+    {
+      "name": "Matchday 1",
+      "matches": [
+        {
+          "date": "2014-08-16",
+          "team1": {
+            "key": "manutd",
+            "name": "Manchester United",
+            "code": "MUN"
+          },
+          "team2": {
+            "key": "swansea",
+            "name": "Swansea",
+            "code": "SWA"
+          },
+          "score1": 1,
+          "score2": 2
+        },
+        {
+          "date": "2014-08-16",
+          "team1": {
+            "key": "leicester",
+            "name": "Leicester City",
+            "code": "LEI"
+          },
+          "team2": {
+            "key": "everton",
+            "name": "Everton",
+            "code": "EVE"
+          },
+          "score1": 2,
+          "score2": 2
+        }
+	  ]
+	}
+}
+		

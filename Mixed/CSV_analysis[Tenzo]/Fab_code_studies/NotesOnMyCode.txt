@@ -1,0 +1,40 @@
+COMMENTS FOR TENZO:
+
+-- ABOUT THIS CODE --
+
+CAPABILITIES AND EXCEPTIONS:
+- it can work with any number of rows (data) in the excel files, provided that they are in the correct format
+- it runs a consistency check on the excel data format and raise error messages in case of incorrect formats 
+- it manages simple exceptions on opening files
+(see function "exceptions(e)" in the code for more details)
+- parameter "verbose" can be set to TRUE within "main", to show the software processing internal outputs (current value is FALSE)
+- The implemented algorithm calculate the hourly costs considering the fraction of hours worked too (BOTH AT THE BEGINNING AND AT THE END OF THE SHIFTS) - in the present case, we have only 22.30 as non-integer hour - .
+
+ASSUMPTIONS and CRITERIA: 
+- within the break notes, dates (full days) are not considered (the are just skipped) and rather interpreted as no break on normal days.
+- wages to employees are payed in any fraction of hour.
+- payrates are always > 0
+
+LIMITATIONS:
+- In the unlikely case that BEST and/or WORST hours (the output) have duplicates, these are not managed by the program, as it returns only one of the values for each of them.
+- The algorithm does not actually consider final working hours after 23:59.
+
+* Note on the percentage algorithm: the algorithm to calculated the percentage is approximate as:
+the hourly cost is calculated on a hourly basis and not on fraction of hours. So, for example, the cost/income at 22.00pm does not account that in the second half of the hour there is a person less (the one working until 22.30pm), instead the income from 22.30 would appear to be linked to the cost of that person, even if the cash is received at 22.45.
+A better algorith should consider this aspect
+
+* Note 2: it is to be noted that, in this particular case, the result does not change considering or omitting the lunch breaks
+
+
+INTERNAL COMMENT:
+# Within sales dictionaries only the hours where some sales occured are considered. Within costs dictionary all the working hours (= shop opening hours) are considered.
+# si puo' ottimizzare con migliori alogiritmi di ricerca e sort, invece che il linear
+# PERCENTAGES procedure: fix 12.00h bug
+# PROCESS SALES procedure: fix bug @ 13.00h
+
+
+
+
+
+
+

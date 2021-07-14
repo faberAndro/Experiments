@@ -1,0 +1,1 @@
+gertcha(function(){"_satellite"in window&&"undefined"!=typeof _satellite&&(_satellite.pageBottomFired||(window.getHash=function(e){var t="";return-1!=e.indexOf("#")&&(t="#"+e.split("#")[1]),t},window.addEventListener("hashchange",function(e){window.oldHash=getHash(e.oldURL)}),window.oldHash=getHash(document.URL),window.asyncPage||_satellite.pageBottom()))});
