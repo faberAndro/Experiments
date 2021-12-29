@@ -1,3 +1,9 @@
+
+import csv
+import datetime
+import pandas as pd
+
+
 """
 Please write you name here: Fabrizio Bernini
 """
@@ -28,9 +34,6 @@ A better algorith should consider this aspect
 
 * Note 2: it is to be noted that, in this particular case, the result does not change considering or omitting the lunch breaks
 """
-
-import csv
-import datetime
 
 
 def exceptions(e): # additional function with printed text list depending on the exception raised
@@ -78,8 +81,7 @@ def exceptions(e): # additional function with printed text list depending on the
     exit()
 
 
-
-def parse_lunch_breaks(row):
+def parse_breaks(row):
 # PARSE THE BREAK INTERVAL NOTES (additional function, to make the "process_shifts" lighter)
        
     try:
@@ -121,6 +123,15 @@ def parse_lunch_breaks(row):
         exceptions(2)
     return values
 
+
+def process_shifts_1(path_to_csv):
+    shifts = pd.read_csv(path_to_csv, parse_dates=['end_time', 'start_time'],
+                         date_parser=lambda x: pd.to_datetime(x).time())
+    earliest_hour = shifts['start_time'].min()
+    latest_hour = shifts['end_time'].max()
+    hours_labels = list(map(str, range(earliest_hour.hour, latest_hour.hour)))
+    cost_table = pd.DataFrame(columns=hours_labels)
+    return
 
 
 def process_shifts(path_to_csv):
@@ -231,7 +242,7 @@ def process_shifts(path_to_csv):
         i=0
         for row in csv_reader:
              if i>0:              
-                pause = parse_lunch_breaks(row)
+                pause = parse_breaks(row)
                 if not(pause[0]):       # discards the annual leaves
                     
                     cost_init_frac = 0
@@ -269,7 +280,6 @@ def process_shifts(path_to_csv):
             if verbose: print(pp1, " ", dict_costs[pp1])
 
     return dict_costs
-
 
 
 def process_sales(path_to_csv):
@@ -366,7 +376,6 @@ def process_sales(path_to_csv):
     return dict_sales
 
 
-
 def compute_percentage(shifts, sales):
     """
 
@@ -406,7 +415,6 @@ def compute_percentage(shifts, sales):
             print(pp3, " ", percentages[pp3])
     
     return percentages
-
 
 
 def best_and_worst_hour(percentages):
@@ -456,8 +464,6 @@ def best_and_worst_hour(percentages):
     return bew
 
 
-
-
 def main(path_to_shifts, path_to_sales):
     """
     Do not touch this function, but you can look at it, to have an idea of
@@ -470,6 +476,7 @@ def main(path_to_shifts, path_to_sales):
     best_hour, worst_hour = best_and_worst_hour(percentages)
 
     return best_hour, worst_hour
+
 
 if __name__ == '__main__':
     # You can change this to test your code, it will not be used

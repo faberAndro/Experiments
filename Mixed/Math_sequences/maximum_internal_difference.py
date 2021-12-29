@@ -62,11 +62,11 @@ if __name__ == '__main__':
     """
     t = time.time()
     with_numpy = True
-    with_standard = True
-    massimo = 100000000
+    with_standard = False
+    massimo = 10000000
     xa, y1, y2 = [], [], []
     passo = 10000
-    for x in range(1, 15):
+    for x in range(1, 8):
         xa.append(passo + x*passo)
         b = ra.sample(range(1, massimo), passo + x*passo)
         l0 = ra.randint(1, massimo)

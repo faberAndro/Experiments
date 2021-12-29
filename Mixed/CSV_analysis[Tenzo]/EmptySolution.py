@@ -21,7 +21,6 @@ def process_shifts(path_to_csv):
     """
     return
 
-
 def process_sales(path_to_csv):
     """
 

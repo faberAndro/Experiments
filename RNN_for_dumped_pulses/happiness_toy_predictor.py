@@ -2,6 +2,7 @@
 """
 A toy predictor for Happiness
 This version in intended for use in GitHub
+test line for GitHub
 """
 
 import pandas as pd
