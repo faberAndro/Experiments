@@ -33,7 +33,7 @@ def recognise_date_or_time():
 
 def load_transcription():
     main_text, lowered_text, transcription_file = '', '', ''
-    file_path = './'
+    file_path = '/'
     file_name = 'sample_001.txt'
     error_color = fg('red')
     message = '''
@@ -69,7 +69,7 @@ def load_transcription():
 
 
 def load_attention_chunks():
-    file_path = './'
+    file_path = '/'
     file_name = 'attention_chunks_vocab.txt'
 
     vocab_file = file_path + file_name
