@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\NEWS_ANALYTICS\SA_machine\Stocks_list_MTD\MacroTrends_Data_Download_A.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\NEWS_ANALYTICS\SA_machine\WIKI_PRICES.csv">
           <value>
             <Attribute>

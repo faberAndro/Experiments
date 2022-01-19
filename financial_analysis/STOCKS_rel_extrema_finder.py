@@ -1,4 +1,7 @@
-# coding=utf-8
+"""
+This moudule tests a first rel. maxima and minima discovery performed on a time-series
+"""
+
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 from scipy.signal import find_peaks

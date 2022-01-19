@@ -219,7 +219,7 @@ def plot_distances(which_window, min_range=1, max_range=power, edge_cut_factor=1
 	# PLOT DELLE DISTANZE ANGOLARI PER I VARI FRONTI
 	stretch = True
 	max_range = min(max_range, power-1)
-	maximums = [] # si può fare invece che sotto il "massimo" cadono il 95% dei valori...
+	maximums = [] # si può fare invece che sotto il "massimo" cadono il 95% dei values...
 	for i in range(min_range, max_range+1):
 		maximums.append(max(all_distances_arrays[i]))
 	max_d = max(maximums)/edge_cut_factor
