@@ -7,11 +7,13 @@ This module creates a first attempt of step-function, starting for a real world 
 # todo: transform the graph in a class! The main object of the class will be the equity.
 import ctypes
 import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.signal import argrelextrema
 
+from stock_loader import load_data
 
 data_folder = r'C:\experiments\financial_analysis\Stocks_list_MTD'
 file_name_x = data_folder + '/MacroTrends_Data_Download_A.csv'
@@ -19,23 +21,6 @@ first_date = '2013-01-03'
 last_date = '2016-12-29'
 thick_interval = 15
 plot_trendline = True
-
-
-def load_data(file_name: str, load_all: bool = False) -> pd.DataFrame:
-    """
-    Args:
-        file_name: filepath
-    Returns: Pandas DataFrame,
-             only with date and values,
-             without header comments
-
-    """
-    # todo: parse dates correctly. Currently they are strings.
-    time_series = pd.read_csv(file_name, header=9)
-    if not load_all:
-        return time_series[['date', 'open']]    # open price
-    else:
-        return time_series
 
 
 def extract_data_interval(data, x_arr, date_1=None, date_2=None):

@@ -2,10 +2,10 @@ import quandl
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-# import fbprophet    # Prophet requires columns ds (Date) and y (value)
+from local_settings import QUANDL_APL_KEY
 
 
-# The adjusted close accounts for stock splits, so that is what we should graph
+# The adjusted close accounts for stock splits: so, that is just what we should make a graph of
 def show_and_plot():
     plt.plot(stock.index, stock['Adj. Close'])
     plt.title('Stock Price')
@@ -14,7 +14,7 @@ def show_and_plot():
 
 
 # CONFIG PARAMS
-quandl.ApiConfig.api_key = 'wySzzBoH_8sR8_zzcpPH'
+quandl.ApiConfig.api_key = QUANDL_APL_KEY
 storage_dir = r'C:\04. IT Projects\PROJECTS\0. AI Projects\NEWS_ANALYTICS\SA_machine\Stocks_list_QDL'
 stock_acronym = 'TSLA'
 
@@ -30,9 +30,3 @@ if __name__ == '__main__':
         stock = quandl.get(stock_name)
         stock.to_csv(stock_file_stored)
         print(stock.head())
-
-
-# gm = gm.rename(columns={'Date': 'ds', 'cap': 'y'})      # Put market cap in billions
-# gm['y'] = gm['y'] / 1e9     # Make the prophet model and fit on the data
-# gm_prophet = fbprophet.Prophet(changepoint_prior_scale=0.15)
-# gm_prophet.fit(gm)
