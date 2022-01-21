@@ -1,0 +1,11 @@
+matplotlib == 3.2.1
+pandas == 1.2.4
+numpy == 1.19.5
+scipy == 1.6.0
+statsmodels == 0.13.1
+talib == 0.4.24
+selenium == 3.141.0
+lxml == 4.7.1
+requests = 2.27.1
+quandl = 3.5.0
+tqdm == 4.46.0

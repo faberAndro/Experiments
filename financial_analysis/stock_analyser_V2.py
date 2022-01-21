@@ -4,7 +4,6 @@ available within the TA-lib library
 Note: all the indicator from this library are timeseries themselves
 """
 
-import os
 import talib
 from matplotlib import pyplot as plt
 from stock_loader import load_equity
