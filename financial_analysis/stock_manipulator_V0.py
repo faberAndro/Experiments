@@ -13,10 +13,11 @@ import numpy as np
 import pandas as pd
 from scipy.signal import argrelextrema
 
-from stock_loader import load_data
+from stock_loader import load_equity
 
-data_folder = r'C:\experiments\financial_analysis\Stocks_list_MTD'
-file_name_x = data_folder + '/MacroTrends_Data_Download_A.csv'
+
+equity_source = 'MTD'
+equity_name_x = 'A'
 first_date = '2013-01-03'
 last_date = '2016-12-29'
 thick_interval = 15
@@ -78,7 +79,7 @@ def generate_main_sequence():
     window_min_lim = 0
     window_max_lim = -1
     ctypes.windll.shcore.SetProcessDpiAwareness(1) if 'win' in sys.platform else None
-    whole_data = load_data(file_name_x)                                         # load stock graph
+    whole_data = load_equity(source=equity_source, equity_acronym=equity_name_x)                                         # load stock graph
     data = whole_data[window_min_lim: window_max_lim]                           # select a window of data
     x_arr = np.arange(len(data))                                                # maps dates to integers
     # todo: refactor all this to work with "date" objects

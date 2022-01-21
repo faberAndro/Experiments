@@ -3,11 +3,12 @@ This module aims to explore the equity data using SARIMAX:
 it compute autocorrelation and looks for seasonality
 """
 
+from local_settings import FINANCIAL_WORKING_FOLDER
 import numpy as np
 import matplotlib.pyplot as plt
 # from tqdm import tqdm_notebook
 # from itertools import product
-from stock_loader import load_data
+from stock_loader import load_equity
 
 from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
 from statsmodels.tsa.arima_process import ArmaProcess
@@ -17,8 +18,7 @@ from statsmodels.tsa.arima_process import ArmaProcess
 
 
 # loading equity data
-file_name = r'C:\04. IT Projects\PROJECTS\0. AI Projects/NEWS_ANALYTICS/SA_machine/Stocks_list_MTD/MacroTrends_Data_Download_A.csv'
-data = load_data(file_name=file_name, load_all=True)
+data = load_equity(source='MTD', equity_acronym='A')
 
 # simulating random walk
 steps = np.random.standard_normal(100)

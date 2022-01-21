@@ -5,11 +5,10 @@ This computes the following indicators:
 3. CCI
 """
 
-from stock_loader import load_data
+from stock_loader import load_equity
 
 # LOAD EQUITY DATA
-file_name = r'C:\04. IT Projects\PROJECTS\0. AI Projects/NEWS_ANALYTICS/SA_machine/Stocks_list_MTD/MacroTrends_Data_Download_A.csv'
-data = load_data(file_name=file_name, load_all=True)
+data = load_equity(source='MTD', equity_acronym='A')
 
 # INDICATORS:
 

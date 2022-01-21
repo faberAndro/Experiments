@@ -1,0 +1,11 @@
+import pathlib
+
+FINANCIAL_WORKING_FOLDER = pathlib.Path(__file__).parent.resolve()
+
+MTD_STOCK_STORAGE_DIR = FINANCIAL_WORKING_FOLDER / 'Stocks_list_MTD'
+MTD_STOCKS_METAINFO = FINANCIAL_WORKING_FOLDER / 'Stocks_list_MTD/Meta_info/'
+MTD_EQUITY_LIST_FILE = MTD_STOCKS_METAINFO / 'equity_list.json'
+MTD_LOG_FILE = MTD_STOCKS_METAINFO / 'equities_downloaded.log'
+
+QUANDL_APL_KEY = ''
+QDL_STOCK_STORAGE_DIR = FINANCIAL_WORKING_FOLDER / 'Stocks_list_QDL'

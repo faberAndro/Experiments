@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\Crops_Correlation\FAOSTAT_data_5-19-2020.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\Mixed\CSV_analysis[Tenzo]\transactions.csv">
           <value>
             <Attribute>
@@ -11,6 +18,1287 @@
           </value>
         </entry>
         <entry key="\Mixed\CSV_analysis[Tenzo]\work_shifts.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_A.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAAP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AACG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAMC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAME.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAOI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAON.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAPL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAU.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAWW.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AAXN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABBV.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABCB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABEO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABEV.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABIO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABMD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABTX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ABUS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACAD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACBI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACCO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACEL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACER.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACGL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACH.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACHC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACHV.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACIA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACIU.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACIW.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACLS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACMR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACNB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACOR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACRE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACRS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACRX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACST.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACTG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACTT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACU.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ACY.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADAP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADBE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADES.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADIL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADMA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADMP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADMS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADNT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADPT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADRO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADSK.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADSW.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADTN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADUS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADVM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADXN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ADXS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEGN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEHR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEIS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEMD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEP.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AER.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AERI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AES.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AESE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEY.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEYE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AEZS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFH.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFIN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFMD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AFYA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGBA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGCO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGEN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGFS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGIO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGLE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGMH.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGNC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGRO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGRX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGTC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AGYS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AHC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AHCO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AHH.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AHPI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AHT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIH.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIHS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIII.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIKI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIMC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIMT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AINC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AINV.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIRG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIRI.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIRT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIV.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AIZ.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AJG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AJRD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AJX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKAM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKBA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKCA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKER.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKO.A.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKO.B.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKR.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKRO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKRX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKTS.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AKTX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_AL.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALAC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALB.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALBO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALCO.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALDX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALE.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALEC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALEX.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALG.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALGN.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_ALGT.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_QDL\GM.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\Stocks_list_QDL\TSLA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\financial_analysis\WIKI_PRICES.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

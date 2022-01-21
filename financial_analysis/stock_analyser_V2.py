@@ -7,13 +7,7 @@ Note: all the indicator from this library are timeseries themselves
 import os
 import talib
 from matplotlib import pyplot as plt
-from local_settings import FINANCIAL_WORKING_FOLDER
-from stock_loader import load_equity_from_QDL
-
-
-# DEFINING THE WORKING FOLDERS
-EQUITY_FOLDER = FINANCIAL_WORKING_FOLDER + '/Stocks_list_QDL'
-os.chdir(FINANCIAL_WORKING_FOLDER)
+from stock_loader import load_equity
 
 
 def plot(*args):
@@ -30,7 +24,7 @@ def plot(*args):
     plt.show()
 
 
-equity_loaded = load_equity_from_QDL('GM')
+equity_loaded = load_equity(source='QDL', equity_acronym='GM')
 close_prices = equity_loaded.Close
 SMA = talib.SMA(close_prices)
 

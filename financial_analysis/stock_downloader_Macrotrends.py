@@ -11,13 +11,11 @@ from lxml import html
 import requests
 import re
 import json
-
-
-stock_data_dir = './Stocks_list_MTD/Meta_info/'
+from settings import MTD_STOCKS_METAINFO, MTD_EQUITY_LIST_FILE, MTD_LOG_FILE
 
 
 def parse_stock_list() -> []:
-    with open(stock_data_dir + '\'s Best Free Stock Screener MacroTrends.html', 'rt') as f:
+    with open(MTD_STOCKS_METAINFO + 'The Web\'s Best Free Stock Screener MacroTrends.html', 'rt') as f:
         pagina = f.read()
     f.close()
     individual_equities = re.findall(r'ticker\":\"(.+?)\"', pagina)
@@ -28,7 +26,7 @@ def parse_stock_list() -> []:
     sectors = list(map(lambda x: x.replace('\\/', '/'), sectors))
     records = [(equity, equity_names[n], industries[n], sectors[n]) for n, equity in enumerate(individual_equities)]
     records.sort(key=lambda record: record[0])
-    with open(stock_data_dir + 'equity_list.json', 'wt') as output_file:
+    with open(MTD_EQUITY_LIST_FILE, 'wt') as output_file:
         json.dump(records, output_file)
     return records
 
@@ -36,12 +34,10 @@ def parse_stock_list() -> []:
 def download_equity_timeseries():   # error handling to be added
 
     # pick up downloading from where left
-    working_dir = stock_data_dir[:-1]
-    log_file = working_dir + '/equities_downloaded.log'
-    f_log = open(log_file, 'rt')
+    f_log = open(MTD_LOG_FILE, 'rt')
     last_equity_downloaded = str(f_log.readline()).strip('\n')
     f_log.close()
-    f_log = open(log_file, 'at')
+    f_log = open(MTD_LOG_FILE, 'at')
     while True:
         keyboard_input = input("Number of equities to download? ")
         try:
@@ -50,7 +46,7 @@ def download_equity_timeseries():   # error handling to be added
         except:
             print("wrong input")
     first_equity = int(last_equity_downloaded) + 1
-    with open(working_dir + '/equities_downloaded.log') as f0:
+    with open(MTD_LOG_FILE) as f0:
         equity_list = json.load(f0)
     f0.close()
     last_equity = min(len(equity_list), first_equity + int(number_of_equities_to_download))
@@ -65,6 +61,7 @@ def download_equity_timeseries():   # error handling to be added
     browser = Firefox(options=opts, firefox_profile=profile)
 
     # proper downloading process
+    n = 0
     for n, equity in enumerate(equity_list[first_equity:last_equity]):
         equity_acronym = equity[0]
         page = 'https://www.macrotrends.net/assets/php/stock_price_history.php?t=' + equity_acronym
@@ -80,7 +77,7 @@ def download_equity_timeseries():   # error handling to be added
 
     # completing operations with log file and Selenium instance
     f_log.close()
-    f_log = open(log_file, "r+")
+    f_log = open(MTD_LOG_FILE, "r+")
     f_log.seek(0)
     f_log.write(str(first_equity + n))
     f_log.close()
