@@ -21,7 +21,7 @@ thick_interval = 15
 plot_trendline = True
 
 
-def load_data(file_name: str) -> pd.DataFrame:
+def load_data(file_name: str, load_all: bool = False) -> pd.DataFrame:
     """
     Args:
         file_name: filepath
@@ -32,8 +32,10 @@ def load_data(file_name: str) -> pd.DataFrame:
     """
     # todo: parse dates correctly. Currently they are strings.
     time_series = pd.read_csv(file_name, header=9)
-    data_frame = time_series[['date', 'open']]    # open price
-    return data_frame
+    if not load_all:
+        return time_series[['date', 'open']]    # open price
+    else:
+        return time_series
 
 
 def extract_data_interval(data, x_arr, date_1=None, date_2=None):
