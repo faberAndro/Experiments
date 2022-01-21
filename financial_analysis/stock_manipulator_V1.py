@@ -6,16 +6,24 @@ a step-function generator based on partial linear regression.
 This replaces the one in V0, based instead on a simple rel max and min connection.
 Also, it attempts to use a new moving average rather than the V0 trend line.
 """
-from . import stock_manipulator_V0 as sa
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+from stock_loader import load_equity
+import stock_manipulator_V0 as smo
 
 plot_regressions = True
 
 
-def moving_average(xa, w):
-    return np.convolve(xa, np.ones(w), 'valid') / w
+# ALTERNATIVE: use pandas rolling functions
+def moving_average(xa, order):
+    """
+
+    :param xa: array of values from the timeseries
+    :param order: order of the moving averages (= number of previous days it's computed over)
+    :return: a numpy array of the moving average
+    """
+    return np.convolve(xa, np.ones(order), 'valid') / order
 
 
 def make_step_function(serie_x, serie_y, day_interval):
@@ -36,11 +44,22 @@ def make_step_function(serie_x, serie_y, day_interval):
 
 
 if __name__ == '__main__':
-    # previously explored what happens changing the number of days (n_days) when building the trend.
-    y_ma_1 = moving_average(y, 2)
-    plt.plot(x[:-1], y_ma_1, c='red', label='moving av 1', linestyle='-.')
-    # y_ma_2 = moving_average(y_ma_1, 2)            # cascade moving average
-    # plt.plot(x[:-2], y_ma_2, c='orange', label='moving av 2')
+    # TESTING A 'CASCADE' MOVING AVERAGE:
+    ORDER = 14
+    equity = load_equity(source='MTD', equity_acronym='AA')
+    values = equity.Close.to_numpy()
+    y_ma_1 = moving_average(values, ORDER)
+    y_ma_1 = np.append(np.zeros(ORDER-1), y_ma_1)     # shifts the ma forward, to superpose better the data
+    y_ma_2 = moving_average(y_ma_1, ORDER+1)            # cascade moving average
+    y_ma_2b = moving_average(y_ma_1, ORDER)            # cascade moving average
+    # PLOTTING THE RESULT
+    plt.plot(values, label='equity', c='blue', linestyle='--')
+    # plt.plot(y_ma_1, c='red', label='moving av 1', linestyle='-.')
+    # plt.plot(y_ma_2, c='orange', label='moving av 2')
+    plt.plot(y_ma_2b, c='red', label='moving av 2b')
+    plt.legend()
+    plt.show()
+
     minimi, massimi = find_local_max_and_min(y_ma_1)
     if False:
         filtered_x_max = [x[0]]

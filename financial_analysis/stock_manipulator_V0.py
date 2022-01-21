@@ -26,15 +26,15 @@ plot_trendline = True
 def extract_data_interval(data, x_arr, date_1=None, date_2=None):
     # TODO: check if date_1 < date_2
     # TODO: WARNING: Not all days are included! (ex.: bank holidays and stock exchange closure days))
-    date_arr = data['date'].to_numpy()
+    date_arr = data['Date'].to_numpy()
     if not date_1:
         date_1 = date_arr[0]
     index_1 = np.where(date_arr == date_1)
     if not date_2:
         date_2 = date_arr[-1]
     index_2 = np.where(date_arr == date_2)
-    data.set_index('date', inplace=True)
-    serie = pd.Series(data['open'])
+    data.set_index('Date', inplace=True)
+    serie = pd.Series(data['Open'])
     y_arr = serie.to_numpy()
     x = x_arr[index_1[0][0]:index_2[0][0]]
     y = y_arr[index_1[0][0]:index_2[0][0]]
