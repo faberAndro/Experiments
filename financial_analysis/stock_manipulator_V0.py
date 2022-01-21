@@ -1,5 +1,4 @@
 """
-The main purpose of the stock_manipulator class is to
 This module creates a first attempt of step-function, starting for a real world equity time-series
 """
 # !/usr/bin/env python
