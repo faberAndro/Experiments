@@ -28,7 +28,6 @@ def f1_average_return(equity, start_year, end_year, method='arithmetic_average')
 
 # kurtosis:
 krt = data.Open.kurtosis()
-
 # CCI:
 # implementing ...
 # to be vectorizes because not performant: each function is to be replaced with a new pd/np series/array
@@ -37,7 +36,7 @@ start = 2*P
 
 
 def tp(ts, time):
-    return sum((ts.high + ts.low + ts.close)[time-P: time])/3/P
+    return sum((ts.High + ts.Low + ts.Close)[time-P: time])/3/P
 
 
 def MA(ts, time):
