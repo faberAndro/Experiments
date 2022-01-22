@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 from stock_loader import load_equity
-import stock_manipulator_V0 as smo
+import stock_manipulator_V0 as Smo
 
 plot_regressions = True
 
@@ -46,21 +46,50 @@ def make_step_function(serie_x, serie_y, day_interval):
 if __name__ == '__main__':
     # TESTING A 'CASCADE' MOVING AVERAGE:
     ORDER = 14
-    equity = load_equity(source='MTD', equity_acronym='AA')
+    equity = load_equity(source='MTD', equity_acronym='A')
     values = equity.Close.to_numpy()
     y_ma_1 = moving_average(values, ORDER)
     y_ma_1 = np.append(np.zeros(ORDER-1), y_ma_1)     # shifts the ma forward, to superpose better the data
     y_ma_2 = moving_average(y_ma_1, ORDER+1)            # cascade moving average
     y_ma_2b = moving_average(y_ma_1, ORDER)            # cascade moving average
+    # FINDING MAXIMA AND MINIMA ONTO THE SMOOTHED FUNCTION:
+    minima, maxima = Smo.find_local_max_and_min(y_ma_2b)
+    y_max = y_ma_2b.take(maxima)
+    y_min = y_ma_2b.take(minima)
+
+    # SEARCH FOR THE BETTER FIT OF THE REAL FUNCTION MAX AND MIN, IN THE NEIGHBORHOOD OF THE SMOOTHED MAX AND MIN
+    span = int(ORDER/2)
+    better_minima, better_maxima = [], []
+    for m in minima[0]:
+        neighbourhood = np.arange(max(m-span, 0), min(m+span, len(values)))
+        y_interval = values.take(neighbourhood)
+        x_real_min = y_interval.argmin()
+        y_real_min = y_interval[x_real_min]
+        better_minima.append(neighbourhood[x_real_min])
+    better_y_min = values.take(better_minima)
+    for m in maxima[0]:
+        neighbourhood = np.arange(max(m-span, 0), min(m+span, len(values)))
+        y_interval = values.take(neighbourhood)
+        x_real_max = y_interval.argmax()
+        y_real_max = y_interval[x_real_max]
+        better_maxima.append(neighbourhood[x_real_max])
+    better_y_max = values.take(better_maxima)
+
     # PLOTTING THE RESULT
     plt.plot(values, label='equity', c='blue', linestyle='--')
-    # plt.plot(y_ma_1, c='red', label='moving av 1', linestyle='-.')
-    # plt.plot(y_ma_2, c='orange', label='moving av 2')
     plt.plot(y_ma_2b, c='red', label='moving av 2b')
+    plt.scatter(maxima, y_max, s=50, edgecolor='red', facecolor='none')
+    plt.scatter(minima, y_min, s=50, edgecolor='black', facecolor='none')
+    plt.scatter(better_minima, better_y_min, s=50, edgecolor='none', facecolor='green')
+    plt.scatter(better_maxima, better_y_max, s=50, edgecolor='none', facecolor='grey')
+    plt.grid(True)
     plt.legend()
     plt.show()
 
-    minimi, massimi = find_local_max_and_min(y_ma_1)
+
+
+
+
     if False:
         filtered_x_max = [x[0]]
         min_dist = 15
