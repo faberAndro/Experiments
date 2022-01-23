@@ -39,23 +39,6 @@ def compute_regr(m: int, mm: np.array, y: np.array) -> (np.array, np.array):
     return np.array([p0[0] + mm[m], p0[1]]), np.array([p1[0] + mm[m], p1[1]])
 
 
-def make_step_function(serie_x, serie_y, day_interval):
-    # compute linear regression segments?
-    # divide initial series in N/M intervals of M days?
-    edges = []
-    m_giorni = len(serie_x) // day_interval + 1
-    x_chunks = np.array_split(serie_x, m_giorni)
-    y_chunks = np.array_split(serie_y, m_giorni)
-    for i in range(m_giorni):
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x_chunks[i], y_chunks[i])
-        x1, x2 = x_chunks[i][0], x_chunks[i][-1]
-        y1, y2 = intercept + slope*x1, intercept + slope*x2
-        edges.append(((x1, x2), (y1, y2)))
-    # finally, plot x_arr vs. y_all_regression on top of the original graph.
-    # try to vectorise
-    return edges
-
-
 if __name__ == '__main__':
     # TESTING A 'CASCADE' MOVING AVERAGE:
     ORDER = 14
