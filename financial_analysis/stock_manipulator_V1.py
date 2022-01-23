@@ -26,6 +26,19 @@ def moving_average(xa, order):
     return np.convolve(xa, np.ones(order), 'valid') / order
 
 
+def regression_edges(f: np.array) -> (tuple, tuple):
+    n = len(f)
+    x = list(range(n))
+    r = stats.linregress(x, f)
+    return (0, r.intercept), (n-1, r.intercept + r.slope*(n-1))
+
+
+def compute_regr(m: int, mm: np.array, y: np.array) -> (np.array, np.array):
+    value_chunk = y[mm[m]: mm[m+1] + 1]
+    p0, p1 = regression_edges(f=value_chunk)
+    return np.array([p0[0] + mm[m], p0[1]]), np.array([p1[0] + mm[m], p1[1]])
+
+
 def make_step_function(serie_x, serie_y, day_interval):
     # compute linear regression segments?
     # divide initial series in N/M intervals of M days?
@@ -75,55 +88,32 @@ if __name__ == '__main__':
         better_maxima.append(neighbourhood[x_real_max])
     better_y_max = values.take(better_maxima)
 
-    # PLOTTING THE RESULT
+    # CONNECTING SIMPLY BETTER MAXIMA AND MINIMA
+    x_mm = np.sort(np.concatenate((np.array([ORDER-1]), better_minima, better_maxima)), axis=0)     # reordering maxima and minima:
+    y_mm = values.take(x_mm)
+
+    # CONNECTING BETTER MAXIMA AND MINIMA THROUGH REGRESSION LINES
+    # todo: get rid of oscillations shorted than 1 week, amending the better max and min arrays
+    #  doing that will aslo ensure the  high-variability but static-on-the-average intervals captured can be still used for investment
+    regression_extrema = []
+    for m in range(len(x_mm) - 1):
+        regression_extrema.append(compute_regr(m, x_mm, values))
+
+    def plot_regression(r_array: list):
+        for p in r_array:
+            plt.plot((p[0][0], p[1][0]), (p[0][1], p[1][1]), c='red')
+
+    # PLOTTING THE RESULTS
     plt.plot(values, label='equity', c='blue', linestyle='--')
     plt.plot(y_ma_2b, c='red', label='moving av 2b')
     plt.scatter(maxima, y_max, s=50, edgecolor='red', facecolor='none')
     plt.scatter(minima, y_min, s=50, edgecolor='black', facecolor='none')
     plt.scatter(better_minima, better_y_min, s=50, edgecolor='none', facecolor='green')
     plt.scatter(better_maxima, better_y_max, s=50, edgecolor='none', facecolor='grey')
+    plt.plot(x_mm, y_mm, c='green')
+    plot_regression(regression_extrema)
     plt.grid(True)
     plt.legend()
     plt.show()
 
-
-
-
-
-    if False:
-        filtered_x_max = [x[0]]
-        min_dist = 15
-        taken_x = filtered_x_max[0]
-        for i in range(1, len(massimi[0])):
-            try:
-                if massimi[0][i] - taken_x >= min_dist:
-                    filtered_x_max.append(massimi[0][i])
-                    taken_x = massimi[0][i]
-            except IndexError:
-                print(i, len(massimi[0]))
-        plt.plot(filtered_x_max, y[filtered_x_max], c='green')
-    plt.plot(massimi[0], y_ma_1[massimi], c='purple')
-    plt.plot(minimi[0], y_ma_1[minimi], c='green')
-    xt = np.arange(x[0], x[-1] + thick_interval, thick_interval)
-    plt.grid(which='both', axis='both')
-    plt.xticks(xt, rotation=90)
-    plt.legend()
-    plt.show()
-    if False:
-        intervallo = 60
-        peso = 5
-        spezzate = crea_spezzate(x, y, day_interval=intervallo)
-        n_spezzate = len(spezzate)
-        for spezzata in spezzate:
-            x_su_spezzata = np.arange(spezzata[0][0], spezzata[0][1])
-            y_su_spezzata = y[spezzata[0][0]: spezzata[0][1]]
-            andamento_su_spezzata, delta_1 = trend_with_exp_weighted_av(y_su_spezzata, n_giorni=5)
-            flex_bottom, flex_top = find_local_max_and_min(andamento_su_spezzata)
-
-            plt.plot(delta_1 + x_su_spezzata, andamento_su_spezzata[:-delta_1], c='red')
-            plt.plot(spezzata[0], spezzata[1], c='green')
-            # plt.scatter(x_su_spezzata[0] + flex_at_min, y_su_spezzata[flex_at_min], s=1000, c='green', marker='_')
-            # plt.scatter(x_su_spezzata[0] + flex_at_max, y_su_spezzata[flex_at_max], s=1000, c='red', marker='_')
-
-        plot_analysis()                                                             # plot
-# INDIRIZZARE CON IN NUMERI NATURALI E KEEP ONLY THE DATE EXTREMES IN EXTRACT DATA INTERVAL
+# todo: refactor to work with pandas series rather than numpy?
