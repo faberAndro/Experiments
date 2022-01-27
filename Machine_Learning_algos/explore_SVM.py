@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn import svm
-from load_data import load_data
+from load_sample_datasets import load_data
 
 X_train, X_test, y_train, y_test, df = load_data()
 

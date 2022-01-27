@@ -1,6 +1,4 @@
 """
-WORK IN PROGRESS!!
-
 This V1 file introduces an enhanced feature:
 a step-function generator based on partial linear regression.
 This replaces the one in V0, based instead on a simple rel max and min connection.
