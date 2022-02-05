@@ -6,9 +6,11 @@ Also, it attempts to use a new moving average rather than the V0 trend line.
 """
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from scipy import stats
 from stock_loader import load_equity
 import stock_manipulator_V0 as Smo
+# import statsmodels.api as sm
 
 
 # ALTERNATIVE: use pandas rolling functions
@@ -22,7 +24,7 @@ def moving_average(xa, order):
     return np.convolve(xa, np.ones(order), 'valid') / order
 
 
-def regression_edges(f: np.array) -> (tuple, tuple):
+def regression_edges(f: np.array) -> (tuple, tuple, float):
     n = len(f)
     x = list(range(n))
     r = stats.linregress(x, f)
@@ -133,3 +135,12 @@ if __name__ == '__main__':
     plt.show()
 
 # todo: refactor to work with pandas series rather than numpy?
+
+    # EXTRACT NOW FEATURES: TO MOVE LATER TO THE FEATURE_EXTRACTOR MODULE
+    # 1. extract time of duration and value gap
+    reg_lines = np.array(regression_extrema)
+    reg_lines = np.diff(reg_lines, axis=1).reshape(len(regression_extrema), 2)
+    # todo: need a correction on the time interval, considering bank holidays, weekends, etc..
+    df_regression_lines = pd.DataFrame(data=reg_lines, columns=['days', 'gaps'])
+    # 2. slopes
+    df_regression_lines = df_regression_lines.assign(slope=df_regression_lines.gaps/df_regression_lines.days)

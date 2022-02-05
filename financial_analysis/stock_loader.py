@@ -16,19 +16,17 @@ def load_equity(source: str,
     # todo: turn date to be the index (this affects the other files)
     if source == 'MTD':
         file_path = MTD_STOCK_STORAGE_DIR / f'MacroTrends_Data_Download_{equity_acronym}.csv'
-        equity = pd.read_csv(file_path, header= 9,
-                             infer_datetime_format=True,
+        equity = pd.read_csv(file_path, header=9,
                              parse_dates=['date'])
-        new_columns = {i:(i[0].upper() + i[1:]) for i in equity.columns}  # raise to uppercase first letter of column names
+        new_columns = {i: (i[0].upper() + i[1:]) for i in equity.columns}  # raise to uppercase first letter of column names
         equity.rename(new_columns, axis=1, inplace=True)
-        return equity
     elif source == 'QDL':
         file_path = QDL_STOCK_STORAGE_DIR / f'{equity_acronym}.csv'
         equity = pd.read_csv(file_path,
-                             infer_datetime_format=True,
                              parse_dates=['Date'])
-        return equity
     else:
-        print(f'SOURCE {source} NOT RECOGNIZED. PROGRAM TERMINATED.')
-        exit(0)
-
+        print(f'SOURCE {source} NOT RECOGNIZED: THIS EQUITY OBJECT IS EMPTY.')
+        equity = None
+    if equity is not None:
+        equity.set_index('Date', inplace=True)
+    return equity
