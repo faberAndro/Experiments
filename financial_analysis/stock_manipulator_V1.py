@@ -32,14 +32,21 @@ def regression_edges(f: np.array) -> (tuple, tuple, float):
 
 
 def compute_regr(m: int, mm: np.array, y: np.array) -> (np.array, np.array):
+    """
+
+    :param m: is the ordinal number of the extremus to consider
+    :param mm: is the array of the indexes of extrema
+    :param y: is the array of real values
+    :return: coordinates of the start and end point of the regression line
+    """
     value_chunk = y[mm[m]: mm[m+1] + 1]
     p0, p1 = regression_edges(f=value_chunk)
     return np.array([p0[0] + mm[m], p0[1]]), np.array([p1[0] + mm[m], p1[1]])
 
 
-def plot_regression(r_array: list):
+def plot_regression(r_array: list, ax):
     for p in r_array:
-        plt.plot((p[0][0], p[1][0]), (p[0][1], p[1][1]), c='red')
+        ax.plot((p[0][0], p[1][0]), (p[0][1], p[1][1]), c='red')
 
 
 def compute_regression_extrema_directions(r):
@@ -99,6 +106,7 @@ if __name__ == '__main__':
     y_mm = values.take(x_mm)
 
     # REMOVING THE POINTS LESS THAN 'ORDER/2' CLOSE (EXAMPLE: IF ORDER=14, REMOVE POINTS THAT ARE LESS THAN 7 DAYS CLOSER TO THE PREVIOUS ONES)
+    # Note: getting rid of oscillations shorted than 1 week ensures the high-variability but static-on-the-average intervals captured can be still used for investment
     neighbourhood = int(ORDER/2)
     close_positions = np.where(np.diff(x_mm) <= 7) + np.array(1)
     x_distant = np.delete(x_mm, close_positions)
@@ -114,8 +122,6 @@ if __name__ == '__main__':
     zigzag_y_mm = np.delete(y_distant, monotone_spots)
 
     # CONNECTING BETTER MAXIMA AND MINIMA, NOW ALSO OPTIMISED, THROUGH REGRESSION LINES
-    # todo: get rid of oscillations shorted than 1 week, amending the better max and min arrays
-    #  doing that will aslo ensure the  high-variability but static-on-the-average intervals captured can be still used for investment
     regression_extrema = []
     for m in range(len(zigzag_x_mm) - 1):
         regression_extrema.append(compute_regr(m, zigzag_x_mm, values))

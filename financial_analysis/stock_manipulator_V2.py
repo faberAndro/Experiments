@@ -5,8 +5,9 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from financial_analysis.stock_loader import load_equity
-from financial_analysis.stock_manipulator_V1 import moving_average
+from financial_analysis.stock_manipulator_V1 import moving_average, compute_regr, plot_regression
 import financial_analysis.stock_manipulator_V0 as Smo
+
 
 class Equity:
     def __init__(self, source, equity_acronym):
@@ -73,13 +74,25 @@ class Equity:
         monotone_spots = np.where(zig_zag_test != 0) + np.array(1)  # these are the indexes (in natural numbers) of the monotone points
         zigzag_x_mm = np.delete(x_distant, monotone_spots)
         zigzag_y_mm = real_values.take(zigzag_x_mm)
+        self.local_extrema = pd.DataFrame({'y': zigzag_y_mm}, index=zigzag_x_mm)
 
-        self.local_extremes = pd.DataFrame({'y': zigzag_y_mm}, index=zigzag_x_mm)
+        # COMPUTING REGRESSION LINES FROM OPTIMISED MAXIMA AND MINIMA
+        regression_points = []
+        for m in range(len(zigzag_x_mm) - 1):
+            regression_points.append(compute_regr(m, zigzag_x_mm, real_values))
+        self.regression_lines = regression_points
 
 
 if __name__ == '__main__':
+    # CALLING THE CONSTRUCTOR
     equity_1 = Equity(source='MTD', equity_acronym='A')
-    ax = plt.gca()
-    equity_1.analysis.History.plot(ax=ax)
-    equity_1.analysis.Smoothed.plot(ax=ax)
-    equity_1.local_extremes.plot(ax=ax, color='red')
+
+    # PLOTTING RESULTS
+    ax0 = plt.gca()
+    equity_1.analysis.History.plot(ax=ax0)
+    plot_regression(equity_1.regression_lines, ax=ax0)
+
+    # ax = plt.gca()
+    # equity_1.analysis.Smoothed.plot(ax=ax)
+    # equity_1.local_extrema.plot(ax=ax, color='red')
+    # plot_regression(equity_1.regression_lines, ax=ax)
