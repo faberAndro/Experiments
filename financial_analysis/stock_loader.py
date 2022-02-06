@@ -27,6 +27,4 @@ def load_equity(source: str,
     else:
         print(f'SOURCE {source} NOT RECOGNIZED: THIS EQUITY OBJECT IS EMPTY.')
         equity = None
-    if equity is not None:
-        equity.set_index('Date', inplace=True)
     return equity
