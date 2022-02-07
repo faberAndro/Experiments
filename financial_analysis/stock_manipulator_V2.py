@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from financial_analysis.stock_loader import load_equity
 from financial_analysis.stock_manipulator_V1 import moving_average, compute_regr, plot_regression
 import financial_analysis.stock_manipulator_V0 as Smo
+import statsmodels.api as sm
 
 
 class Equity:
@@ -81,6 +82,29 @@ class Equity:
         for m in range(len(zigzag_x_mm) - 1):
             regression_points.append(compute_regr(m, zigzag_x_mm, real_values))
         self.regression_lines = regression_points
+
+        # COMPUTING SAME REGRESSION LINES BUT USING STATSMODELS
+        regression_points_2 = []
+        for m, x1 in enumerate(zigzag_x_mm[:-1]):
+            x2 = zigzag_x_mm[m + 1]
+            x = range(x1, x2 + 1)
+            x12 = sm.add_constant(x)
+            y = real_values.iloc[x].values
+            model = sm.OLS(y, x12).fit()
+            z = model.fittedvalues
+            y1, y2 = z[0], z[-1]
+
+            delta_x = x2 - x1
+            delta_y = y2 - y1
+            slope = model.params[1]
+            adjusted_variance = np.sqrt(model.ssr / len(z)) / abs(delta_y)
+
+            regression_points_2.append([x1, y1, x2, y2, delta_x, delta_y, slope, adjusted_variance])
+            w = pd.DataFrame.from_records(data=regression_points_2,
+                                          columns=['x1', 'y1', 'x2', 'y2', 'lag', 'gap', 'slope', 'sigma'])
+            # normalise the statistics between -1 and 1
+            w[['lag', 'gap', 'slope', 'sigma']] = w[['lag', 'gap', 'slope', 'sigma']] / w[['lag', 'gap', 'slope', 'sigma']].max()
+            self.regression_lines_2 = w
 
 
 if __name__ == '__main__':
