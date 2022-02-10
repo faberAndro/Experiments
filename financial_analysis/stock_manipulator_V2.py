@@ -9,6 +9,10 @@ from financial_analysis.stock_manipulator_V1 import moving_average, compute_regr
 import financial_analysis.stock_manipulator_V0 as Smo
 import statsmodels.api as sm
 
+from statsmodels.graphics.tsaplots import plot_pacf
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 
 class Equity:
     def __init__(self, source, equity_acronym):
