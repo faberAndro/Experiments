@@ -1,5 +1,6 @@
 try:
     import nltk
+    import pprint
     from colored import fg, bg, attr
     from getch import pause
 except ModuleNotFoundError:
@@ -22,7 +23,7 @@ except ModuleNotFoundError:
 
 
 def _from_rgb(rgb):
-    """translates an rgb tuple of int to a friendly color code
+    """translates a rgb tuple of int to a friendly color code
     """
     return "#%02x%02x%02x" % rgb
 
@@ -33,7 +34,7 @@ def recognise_date_or_time():
 
 def load_transcription():
     main_text, lowered_text, transcription_file = '', '', ''
-    file_path = '/'
+    file_path = ''
     file_name = 'sample_001.txt'
     error_color = fg('red')
     message = '''
@@ -43,7 +44,7 @@ def load_transcription():
     while True:
         default = ''
         command = input(message)
-        if command=='e':
+        if command == 'e':
             print('Program terminated')
             exit(0)
         else:
@@ -62,14 +63,15 @@ def load_transcription():
                         break
                     except UnicodeDecodeError:
                         print(error_color + 'File type not recognized. Valid files are text type (UTF-8). Please try again' + attr('reset'))
-            except OSError:
+            except OSError as ose:
+                print(ose)
                 print(error_color + 'File not found or input incorrect. Please try again' + attr('reset'))
 
     return main_text, lowered_text
 
 
 def load_attention_chunks():
-    file_path = '/'
+    file_path = ''
     file_name = 'attention_chunks_vocab.txt'
 
     vocab_file = file_path + file_name
@@ -80,7 +82,7 @@ def load_attention_chunks():
     attention_words = []
     for i, a in enumerate(raw_attention_words):     # check the right syntax of attention words file
         new_a = a.replace('\t', ' ').strip()
-        if a!='' and a!='\n':
+        if a != '' and a != '\n':
             attention_words.append(new_a)
     return attention_words
 
@@ -125,7 +127,7 @@ def find_actions(document):
         return None, None
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     go_on = True
     while go_on:
         attention_chunks = load_attention_chunks()
@@ -139,5 +141,5 @@ if __name__=='__main__':
         decision = ''
         while decision not in ['y', 'n']:
             decision = input('Do you want to check another transcript? (y/n) ')
-            go_on = True if decision=='y' else False
+            go_on = True if decision == 'y' else False
     pause('Press any key to exit ..')
