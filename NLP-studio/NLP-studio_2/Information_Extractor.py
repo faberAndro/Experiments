@@ -171,13 +171,13 @@ def _2_remove_stopWords_and_punctuation(pre_processed_text, way):
     text_for_summary = copy_structured_text(pre_processed_text)
     stop_words_list = set(stopwords.words('english'))   # remove any possible duplicate from stopwords corpus
 
-    if way=='regex_way':
+    if way == 'regex_way':
         stop_words_regex_list = list(map((lambda stop_w: ''.join([r'(\W)', stop_w, r'(\W)'])), stop_words_list))
         text_without_stop_words = pre_processed_text.lower()
         for stop_word in stop_words_regex_list:
             text_without_stop_words = re.sub(stop_word, r'\1', text_without_stop_words)
 
-    if way=='nltk_way':
+    if way == 'nltk_way':
         for s, chunk in enumerate(text_without_stop_words_and_punctuation):
             lowered_sentences = chunk['text'].lower()
             tokenized_sentences = nltk.sent_tokenize(lowered_sentences)
