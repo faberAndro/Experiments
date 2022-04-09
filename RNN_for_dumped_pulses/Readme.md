@@ -28,17 +28,13 @@ the less or more presence of the sun. This addition is performed to raise the di
 if the RNN can handle it.
 The metric explored at moment is MAPE.
 
-
-
-
-
 #### INSTRUCTIONS TO RUN THIS EXPERIMENT:
 
 1. This code has been written using the python 3.8.0 interpreter. 
 Ensure you have this version (best is to use a virtual env). 
 Alternatively, you can try a more recent interpreter, although the compatibility will not be 100% ensured.
 2. Dowload the files in this subfolder to test only this particular experiment,
-or clone the entire REPO if you are also interested in other projects and to have them on GIT.
+or clone the entire REPO if you are also interested in other projects and in having them on GIT.
 3. Be sure to be in this particular experiment subfolder ("/experiments/RNN_for_dumped_pulses). 
 Then run from CLI the command "python -m pip install -r requirements.txt". This will install 
 the packages/modules required for this particular experiment. 
