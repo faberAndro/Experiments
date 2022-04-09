@@ -23,8 +23,10 @@ def load_GloVe_dictionary():
     Returns: a dictionary of 400.000 50-dim GloVe Vectors
 
     """
+
     def default_value():
         return np.ones(50)
+
     word_embeddings_vectors = defaultdict(default_value)
     web = False
     try:
@@ -32,7 +34,8 @@ def load_GloVe_dictionary():
         print('loading GloVe word vectors from file ... pelase wait a minute ...')
     except OSError:
         web = True
-        print('local GloVe file not available\nLoading from web resource https://archive.org/download/glove.6B.50d-300d/glove.6B.50d.txt')
+        print('local GloVe file not available\nLoading from web resource '
+              'https://archive.org/download/glove.6B.50d-300d/glove.6B.50d.txt')
         print('... DOWNLOADING FILE ...\nPlease wait: this may take some minutes...')
         web_req = requests.get("https://archive.org/download/glove.6B.50d-300d/glove.6B.50d.txt")
         print('DOWNLOAD FINISHED!')
@@ -75,7 +78,8 @@ def _0_pre_processing(file_name):
                 pre_processed_text:
                     Keys are: character' name, type [speech or description], text
                 sequential_sequences:
-                    same list but with texts tokenized and an additional key 'index' containing a list of sentence indexes
+                    same list but with texts tokenized and an additional key 'index'
+                    containing a list of sentence indexes
     """
     pre_processed_text = []
     character_speaking = False
@@ -169,7 +173,7 @@ def _2_remove_stopWords_and_punctuation(pre_processed_text, way):
     text_without_stop_words_and_punctuation = copy_structured_text(pre_processed_text)
     purged_text_as_lists = copy_structured_text(pre_processed_text)
     text_for_summary = copy_structured_text(pre_processed_text)
-    stop_words_list = set(stopwords.words('english'))   # remove any possible duplicate from stopwords corpus
+    stop_words_list = set(stopwords.words('english'))  # remove any possible duplicate from stopwords corpus
 
     if way == 'regex_way':
         stop_words_regex_list = list(map((lambda stop_w: ''.join([r'(\W)', stop_w, r'(\W)'])), stop_words_list))
@@ -245,7 +249,7 @@ def _3_analyse_word_frequencies(text_as_nested_lists, graphs=True):
         print('stemmed then lemmatized:\n', result_stemmed_plus_lemmatized, len(result_stemmed_plus_lemmatized))
         # print(result_lemmatized - result_stemmed, result_stemmed - result_lemmatized)
         result = result_stemmed
-    return result
+    return result, result_lemmatized
 
 
 def _4_extract_names(text, structured_text):
@@ -258,7 +262,7 @@ def _4_extract_names(text, structured_text):
 
     """
     text = re.sub('\\W', ' ', text)
-    stop_words = ''# set(stopwords.words('english'))
+    stop_words = ''  # set(stopwords.words('english'))
     text_splitted = text.split()
     text_no_stop_words = [x for x in text_splitted if x not in stop_words]
     tagged_sentences = nltk.pos_tag(text_no_stop_words)
@@ -266,7 +270,7 @@ def _4_extract_names(text, structured_text):
     # grammar = "NAME-- : {<NNP>}"
     # parser = nltk.RegexpParser(grammar)
     # list_of_names = parser.parse(tagged_sentences)
-    list_of_names = [(i, x[0]) for i, x in enumerate(tagged_sentences) if x[1]=='NNP']
+    list_of_names = [(i, x[0]) for i, x in enumerate(tagged_sentences) if x[1] == 'NNP']
     # names_position = [n[0] for n in list_of_names]
     # comparison_list = [(i, y) for i, y in enumerate(tagged_lowercase_sentences) if i in names_position]
     # print(list_of_names, '\n\n', comparison_list)
@@ -298,14 +302,14 @@ def _5_summarise(word_embedding_vectors, text_of_sentences, cleaned_text_as_list
     # Assign word vectors to transcript words - sequentially
     sentence_vectors = []
     for sent_chunk in cleaned_text_as_lists:
-        for sentence in sent_chunk['text']:   # 'sentence' is a list of splitted words
-            if len(sentence)>0:
+        for sentence in sent_chunk['text']:  # 'sentence' is a list of splitted words
+            if len(sentence) > 0:
                 sentence_vector = []
                 print(sentence)
                 for word in sentence:
                     sentence_vector.append(word_embedding_vectors[word])
                 sentence_vector = np.average(np.asarray(sentence_vector), axis=0)
-                assert(sentence_vector.shape == (50,)), print(sentence, sentence_vector)
+                assert (sentence_vector.shape == (50,)), print(sentence, sentence_vector)
 
                 sentence_vectors.append(sentence_vector)
 
@@ -316,12 +320,13 @@ def _5_summarise(word_embedding_vectors, text_of_sentences, cleaned_text_as_list
     remaining_time = '?'
     for i in range(n):
         t1 = time.time()
-        print(round(i/n, 3)*100, '%', 'remaining time [sec]:', remaining_time)
+        print(round(i / n, 3) * 100, '%', 'remaining time [sec]:', remaining_time)
         for j in range(n):
             if i != j:
-                similarity_matrix[i][j] = cosine_similarity(sentence_vectors[i].reshape(1, 50), sentence_vectors[j].reshape(1, 50))[0, 0]
+                similarity_matrix[i][j] = cosine_similarity(sentence_vectors[i].reshape(1, 50),
+                                                            sentence_vectors[j].reshape(1, 50))[0, 0]
         t2 = time.time()
-        remaining_time = round((t2 - t1), 0) * (n-i)
+        remaining_time = round((t2 - t1), 0) * (n - i)
     # apply text_rank / page_rank algorithm
     print('senteces: ', n, ' - building now the graph... ')
     nx_graph = nx.from_numpy_array(similarity_matrix)
@@ -368,10 +373,11 @@ def _6_additional_text_attribution(word_embedding_vectors, additional_text_file,
     add_text_purged = [x for x in add_text_in_splitted_words if x not in stop_words]
 
     # assign a speech vector to the additional text
-    add_text_speech_vector = np.average(np.asarray([word_embedding_vectors[word] for word in add_text_purged if word_embedding_vectors[word]]), axis=0)
+    add_text_speech_vector = np.average(
+        np.asarray([word_embedding_vectors[word] for word in add_text_purged if word_embedding_vectors[word]]), axis=0)
 
     # Assign "speech vectors" to each character's speech in a dictionary
-    characters_vectors = {}     # output initialization
+    characters_vectors = {}  # output initialization
     for s in cleaned_text:
         if s['name']:
             characters_vectors[s['name']] = []
@@ -379,16 +385,19 @@ def _6_additional_text_attribution(word_embedding_vectors, additional_text_file,
     sentence_vectors = []
     for sent_chunk in cleaned_text:
         if sent_chunk['name'] is not None:
-            for sentence in sent_chunk['text']:   # 'sentence' here is the full piece of speech
-                if len(sentence)>0:
-                    sentence_vector = np.average(np.asarray([word_embedding_vectors[word] for word in sentence if word_embedding_vectors[word]]), axis=0)
+            for sentence in sent_chunk['text']:  # 'sentence' here is the full piece of speech
+                if len(sentence) > 0:
+                    sentence_vector = np.average(
+                        np.asarray([word_embedding_vectors[word] for word in sentence if word_embedding_vectors[word]]),
+                        axis=0)
                     sentence_vectors.append(sentence_vector)
                 speech_average_vector = np.average(sentence_vectors, axis=0)
                 characters_vectors[sent_chunk['name']].append(speech_average_vector)
     # for person in characters_vectors:
     #     characters_vectors[person] = np.average(characters_vectors[person], axis=0)
 
-    # comparison doing cosine similarities: if the overall similarity is less than 0.5, it outputs "not enough similarities found"
+    # comparison doing cosine similarities:
+    #   if the overall similarity is less than 0.5, it outputs "not enough similarities found"
     treshold = 0.5
     selected_character = 'no one'
     sim_grade = 0
@@ -396,9 +405,9 @@ def _6_additional_text_attribution(word_embedding_vectors, additional_text_file,
         average = 0
         for i, single_speech in enumerate(characters_vectors[person]):
             cs = cosine_similarity(add_text_speech_vector.reshape(1, 50), single_speech.reshape(1, 50))[0, 0]
-            print(person, 'speech %s similarity coef:' %str(i), cs)
+            print(person, 'speech %s similarity coef:' % str(i), cs)
             average += cs
-        average = average/len(characters_vectors[person])
+        average = average / len(characters_vectors[person])
         if average > sim_grade:
             sim_grade = average
             selected_character = person
@@ -410,7 +419,6 @@ def _6_additional_text_attribution(word_embedding_vectors, additional_text_file,
 
 if __name__ == '__main__':
     # TODO: check if the key exists in embedding words when using generators
-
     # LOAD TRANSCRIPT AS PLAIN UNSTRUCTURED TEXT FROM FILE to "unstructured_text"
     try:
         with open("transcript.txt") as transcript_file:
@@ -419,9 +427,9 @@ if __name__ == '__main__':
     except OSError:
         print("please place a file named \"transcript.txt\" into the program folder, then retry")
         exit(0)
-
     # ASK USER FOR CHOICES
     word_vectors_are_loaded = False
+    word_embeddings = dict()
     go_on = 'y'
     while go_on == 'y':
         choice = None
@@ -440,7 +448,8 @@ if __name__ == '__main__':
         start_time = time.time()
         # PERFORMS OPERATIONS ON TRASCRIPT
         text_first_processed, text_in_sentences = _0_pre_processing("transcript.txt")
-        purged_text, purged_text_in_lists, text_to_go_to_5 = _2_remove_stopWords_and_punctuation(text_first_processed, 'nltk_way')
+        purged_text, purged_text_in_lists, text_to_go_to_5 = _2_remove_stopWords_and_punctuation(text_first_processed,
+                                                                                                 'nltk_way')
         if choice == '1':
             _1_extract_normalized_keywords(purged_text_in_lists)
         if choice == '3':
@@ -463,11 +472,4 @@ if __name__ == '__main__':
         end_time = time.time()
         print('(Running time: ', end_time - start_time, 'sec.)')
 
-        # WRITE NEW TEXT TO FILE
-        if False:
-            with open('amended_transcript.txt', 'wt', encoding='UTF-8') as amended_transcript_file:
-                amended_transcript_file.write(amended_transcript_text)
-            amended_transcript_file.close()
-
         go_on = input('Do you want to try other functions ? (y/n)  ')
-
