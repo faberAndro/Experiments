@@ -1,5 +1,5 @@
 import pandas as pd
-from sys import exit
+
 from settings import MTD_STOCK_STORAGE_DIR, QDL_STOCK_STORAGE_DIR
 
 
@@ -18,7 +18,8 @@ def load_equity(source: str,
         file_path = MTD_STOCK_STORAGE_DIR / f'MacroTrends_Data_Download_{equity_acronym}.csv'
         equity = pd.read_csv(file_path, header=9,
                              parse_dates=['date'])
-        new_columns = {i: (i[0].upper() + i[1:]) for i in equity.columns}  # raise to uppercase first letter of column names
+        new_columns = {i: (i[0].upper() + i[1:])
+                       for i in equity.columns}  # raise to uppercase first letter of column names
         equity.rename(new_columns, axis=1, inplace=True)
     elif source == 'QDL':
         file_path = QDL_STOCK_STORAGE_DIR / f'{equity_acronym}.csv'

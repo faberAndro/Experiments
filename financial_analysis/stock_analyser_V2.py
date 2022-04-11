@@ -1,7 +1,7 @@
 """
-This module experiments financial analysis through the functions
+This module explores financial analysis through the functions
 available within the TA-lib library
-Note: all the indicator from this library are timeseries themselves
+Note: all the indicators from this library are timeseries themselves
 """
 
 import talib

@@ -3,9 +3,9 @@ This moudule tests a first rel. maxima and minima discovery performed on a time-
 """
 
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.signal import argrelextrema
 from scipy.signal import find_peaks
-import numpy as np
 
 
 def smoothing():

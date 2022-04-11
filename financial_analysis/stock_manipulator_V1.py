@@ -31,17 +31,17 @@ def regression_edges(f: np.array) -> (tuple, tuple, float):
     return (0, r.intercept), (n-1, r.intercept + r.slope*(n-1))
 
 
-def compute_regr(m: int, mm: np.array, y: np.array) -> (np.array, np.array):
+def compute_regr(me: int, mm: np.array, y: np.array) -> (np.array, np.array):
     """
 
-    :param m: is the ordinal number of the extremus to consider
+    :param me: is the ordinal number of the extremus to consider
     :param mm: is the array of the indexes of extrema
     :param y: is the array of real values
     :return: coordinates of the start and end point of the regression line
     """
-    value_chunk = y[mm[m]: mm[m+1] + 1]
+    value_chunk = y[mm[me]: mm[me + 1] + 1]
     p0, p1 = regression_edges(f=value_chunk)
-    return np.array([p0[0] + mm[m], p0[1]]), np.array([p1[0] + mm[m], p1[1]])
+    return np.array([p0[0] + mm[me], p0[1]]), np.array([p1[0] + mm[me], p1[1]])
 
 
 def plot_regression(r_array: list, ax):
@@ -102,11 +102,14 @@ if __name__ == '__main__':
     better_y_max = values.take(better_maxima)
 
     # CONNECTING SIMPLY BETTER MAXIMA AND MINIMA
-    x_mm = np.sort(np.concatenate((np.array([ORDER-1]), better_minima, better_maxima)), axis=0)     # reordering maxima and minima:
+    # reordering maxima and minima:
+    x_mm = np.sort(np.concatenate((np.array([ORDER-1]), better_minima, better_maxima)), axis=0)
     y_mm = values.take(x_mm)
 
-    # REMOVING THE POINTS LESS THAN 'ORDER/2' CLOSE (EXAMPLE: IF ORDER=14, REMOVE POINTS THAT ARE LESS THAN 7 DAYS CLOSER TO THE PREVIOUS ONES)
-    # Note: getting rid of oscillations shorted than 1 week ensures the high-variability but static-on-the-average intervals captured can be still used for investment
+    # REMOVING THE POINTS LESS THAN 'ORDER/2' CLOSE
+    # (EXAMPLE: IF ORDER=14, REMOVE POINTS THAT ARE LESS THAN 7 DAYS CLOSER TO THE PREVIOUS ONES)
+    # Note: getting rid of oscillations shorted than 1 week ensures
+    # the high-variability but static-on-the-average intervals captured can be still used for investment
     neighbourhood = int(ORDER/2)
     close_positions = np.where(np.diff(x_mm) <= 7) + np.array(1)
     x_distant = np.delete(x_mm, close_positions)
@@ -116,8 +119,10 @@ if __name__ == '__main__':
     # todo: x and y can be vectorised to a single array
     y_mm_directions = np.sign(np.diff(y_distant))
     shifted_array = np.roll(y_mm_directions, -1)
-    zig_zag_test = (y_mm_directions + shifted_array)[:-1]           # the sum of N.2 consecutive y directions should always be 0, so in theory this array should be made only of zeros
-    monotone_spots = np.where(zig_zag_test != 0) + np.array(1)      # these are the indexes (in natural numbers) of the monotone points
+    # the sum of N.2 consecutive y directions should always be 0, so in theory this array should be made only of zeros
+    zig_zag_test = (y_mm_directions + shifted_array)[:-1]
+    # the followings are the indexes (in natural numbers) of the monotone points
+    monotone_spots = np.where(zig_zag_test != 0) + np.array(1)
     zigzag_x_mm = np.delete(x_distant, monotone_spots)
     zigzag_y_mm = np.delete(y_distant, monotone_spots)
 
@@ -127,6 +132,7 @@ if __name__ == '__main__':
         regression_extrema.append(compute_regr(m, zigzag_x_mm, values))
 
     # PLOTTING THE RESULTS
+    ax0 = plt.gca()
     plt.plot(values, label='equity', c='blue', linestyle='--')
     plt.plot(y_ma_2b, c='red', label='moving av 2b')
     plt.scatter(minima, y_min, s=50, edgecolor='black', facecolor='none')
@@ -135,7 +141,7 @@ if __name__ == '__main__':
     plt.scatter(better_maxima, better_y_max, s=50, edgecolor='none', facecolor='grey')
     plt.plot(x_mm, y_mm, c='green')
     plt.plot(zigzag_x_mm, zigzag_y_mm, c='orange')
-    plot_regression(regression_extrema)
+    plot_regression(r_array=regression_extrema, ax=ax0)
     plt.grid(True)
     plt.legend()
     plt.show()

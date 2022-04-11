@@ -9,9 +9,10 @@ from financial_analysis.stock_manipulator_V1 import moving_average, compute_regr
 import financial_analysis.stock_manipulator_V0 as Smo
 import statsmodels.api as sm
 
-from statsmodels.graphics.tsaplots import plot_pacf
-from statsmodels.graphics.tsaplots import plot_acf
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+# the following imports will be used for further development:
+# from statsmodels.graphics.tsaplots import plot_pacf
+# from statsmodels.graphics.tsaplots import plot_acf
+# from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 
 class Equity:
@@ -24,7 +25,7 @@ class Equity:
                                       equity_acronym=self.equity_acronym)
         # self.timeseries = self.timeseries.assign(history=self.timeseries.Close)   # this can be another option
         self.timeseries = self.timeseries.assign(History=(self.timeseries.High + self.timeseries.Low)/2)
-        
+
         # SMOOTHING
         mav_l1 = moving_average(self.timeseries.History.values, self.ORDER)
         mav_l1 = np.append(np.zeros(self.ORDER - 1), mav_l1)
@@ -34,12 +35,12 @@ class Equity:
         # Cutting now head and tail of ORDER-size, as they are not properly captured by the smoothing algo
         self.analysis = self.timeseries.iloc[self.ORDER: -self.ORDER-1][
             ['Date', 'Volume', 'History', 'Smoothed']].reset_index(drop=True)
-        
+
         # FINDING NOW LOCAL MAX AND MIN
         smoothed_array = self.analysis.Smoothed.values
         x_minima, x_maxima = Smo.find_local_max_and_min(smoothed_array)
         y_minima, y_maxima = smoothed_array.take(x_minima), smoothed_array.take(x_maxima)
-        
+
         # CORRECTING LOCAL MAX AND MIN WITH BETTER NEIGHBOURS
         real_values = self.analysis.History
         span = int(self.ORDER / 2)
@@ -58,13 +59,14 @@ class Equity:
             # y_real_max = y_interval[x_real_max]
             adjusted_maxima.append(neighbourhood[x_real_max])
         # adjusted_y_max = real_values.take(adjusted_maxima)
-        
+
         # MERGING TO ONE ARRAY ALL LOCAL ADJUSTED MAX AND MIN
         x_mm = np.sort(np.concatenate((adjusted_minima, adjusted_maxima),
                        axis=0))  # reordering maxima and minima
         y_mm = real_values.take(x_mm)
 
-        # REMOVING THE POINTS LESS THAN 'ORDER/2' CLOSE (EXAMPLE: IF ORDER=14, REMOVE POINTS THAT ARE LESS THAN 7 DAYS CLOSER TO THE PREVIOUS ONES)
+        # REMOVING THE POINTS LESS THAN 'ORDER/2' CLOSE (EXAMPLE: IF ORDER=14,
+        # REMOVE POINTS THAT ARE LESS THAN 7 DAYS CLOSER TO THE PREVIOUS ONES)
         neighbourhood = int(self.ORDER / 2)
         close_positions = np.where(np.diff(x_mm) <= neighbourhood) + np.array(1)
         x_distant = np.delete(x_mm, close_positions)
@@ -75,8 +77,10 @@ class Equity:
         y_mm_directions = np.sign(np.diff(y_distant))
         shifted_array = np.roll(y_mm_directions, -1)
         zig_zag_test = (y_mm_directions + shifted_array)[
-                       :-1]  # the sum of N.2 consecutive y directions should always be 0, so in theory this array should be made only of zeros
-        monotone_spots = np.where(zig_zag_test != 0) + np.array(1)  # these are the indexes (in natural numbers) of the monotone points
+                       :-1]  # the sum of N.2 consecutive y directions should always be 0,
+        # so in theory this array should be made only of zeros
+        monotone_spots = np.where(zig_zag_test != 0) + np.array(1)  # these are the indexes (in natural numbers)
+        # of the monotone points
         zigzag_x_mm = np.delete(x_distant, monotone_spots)
         zigzag_y_mm = real_values.take(zigzag_x_mm)
         self.local_extrema = pd.DataFrame({'y': zigzag_y_mm}, index=zigzag_x_mm)
@@ -107,7 +111,9 @@ class Equity:
             w = pd.DataFrame.from_records(data=regression_points_2,
                                           columns=['x1', 'y1', 'x2', 'y2', 'lag', 'gap', 'slope', 'sigma'])
             # normalise the statistics between -1 and 1
-            w[['lag', 'gap', 'slope', 'sigma']] = w[['lag', 'gap', 'slope', 'sigma']] / w[['lag', 'gap', 'slope', 'sigma']].max()
+            w[['lag', 'gap', 'slope', 'sigma']] = w[['lag', 'gap', 'slope', 'sigma']] / w[
+                ['lag', 'gap', 'slope', 'sigma']
+            ].max()
             self.regression_lines_2 = w
 
 

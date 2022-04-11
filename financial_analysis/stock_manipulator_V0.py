@@ -78,7 +78,7 @@ def generate_main_sequence():
     window_min_lim = 0
     window_max_lim = -1
     ctypes.windll.shcore.SetProcessDpiAwareness(1) if 'win' in sys.platform else None
-    whole_data = load_equity(source=equity_source, equity_acronym=equity_name_x)                                         # load stock graph
+    whole_data = load_equity(source=equity_source, equity_acronym=equity_name_x)  # load stock graph
     data = whole_data[window_min_lim: window_max_lim]                           # select a window of data
     x_arr = np.arange(len(data))                                                # maps dates to integers
     # todo: refactor all this to work with "date" objects
@@ -91,7 +91,7 @@ def generate_main_sequence():
     step_curve_x = np.sort(np.concatenate((flex_at_min[0], flex_at_max[0]), axis=0))[:-10]    # build step_approx_curve
     step_curve_y = y_trend.take(step_curve_x)
     step_curve_x += x[0]
-    plot_analysis(x, y, delta, y_trend, step_curve_x, step_curve_y)                                                             # plot
+    plot_analysis(x, y, delta, y_trend, step_curve_x, step_curve_y)  # plot
     # need to find a better plot: from human visual analysis to automatic analsys... possibly re-introducing the
     # idea of regression on single segments.
     return x, y, y_trend, step_curve_x, step_curve_x

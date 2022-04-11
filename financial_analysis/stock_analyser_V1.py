@@ -1,17 +1,17 @@
 """
 This module aims to explore the equity data using SARIMAX:
-it compute autocorrelation and looks for seasonality
+it computes autocorrelation and looks for seasonality
 """
 
-from local_settings import FINANCIAL_WORKING_FOLDER
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
+from statsmodels.tsa.arima_process import ArmaProcess
+
 # from tqdm import tqdm_notebook
 # from itertools import product
 from stock_loader import load_equity
 
-from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
-from statsmodels.tsa.arima_process import ArmaProcess
 # from statsmodels.tsa.statespace.sarimax import SARIMAX
 # from statsmodels.tsa.holtwinters import ExponentialSmoothing
 # from statsmodels.tsa.stattools import adfuller
