@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, ComplementNB
 from sklearn import tree
 from sklearn import svm
-
+from sklearn.utils import Bunch
 
 DATASET_NAMES = ['wine', 'iris']
 
@@ -47,37 +47,31 @@ def use_naive_bayes(training_data: tuple) -> dict:
     return scores
 
 
-def use_decision_tree(train_test_data: tuple):
-    output_filename = 'wine'
-    X_train, X_test, y_train, y_test = train_test_data
+def use_decision_tree(training_data: tuple,
+                      raw_data: Bunch,
+                      tree_graph_filename: str = 'DtreeGraph'):
 
+    output_filename = './dtree_graphs/' + tree_graph_filename
+    X_train, X_test, y_train, y_test = training_data
     clf = tree.DecisionTreeClassifier(criterion='gini', max_depth=3)
     clf = clf.fit(X_train, y_train)
-    prediction = clf.predict(X_test)
     score = clf.score(X_test, y_test)
-    print('score', score)
+    print('Tree score:', score)
 
-    p = pd.DataFrame(data=y_test, columns=['ground truth'])
-    p = p.assign(prediction=prediction)
-    p_score = np.array(p['ground truth'] == p['prediction']).sum()/len(p)
-    print('p score', p_score)
-
-    # plotting the tree
-    tree.plot_tree(clf)
-    dot_data = tree.export_graphviz(clf,
-                                    out_file=None)
-    graph = graphviz.Source(dot_data)
-    graph.render(f"{output_filename}.txt")
-
+    # plotting and saving the tree structure and info
+    tree.plot_tree(clf)     # this if you want just a simple plot without saving it to file.
     dot_data = tree.export_graphviz(clf,
                                     out_file=None,
-                                    feature_names=dataset.feature_names,
-                                    class_names=dataset.target_names,
+                                    feature_names=training_data[0].columns,
+                                    class_names=raw_data.target_names,
                                     filled=True,
                                     rounded=True,
-                                    special_characters=True)
+                                    special_characters=True,
+                                    leaves_parallel=True,
+                                    impurity=True)
     graph = graphviz.Source(dot_data)
     graph.render(output_filename)
+    return score
 
 
 def use_svm(c):
@@ -161,4 +155,6 @@ def use_support_vector_machines():
 if __name__ == '__main__':
     use_case_dataset = visualise_sample_dataset('wine')
     use_case_training_data = prepare_trainig_data(use_case_dataset)
-    ml_result = use_naive_bayes(training_data=use_case_training_data)
+    naive_bayes_result = use_naive_bayes(training_data=use_case_training_data)
+    dtree_result = use_decision_tree(training_data=use_case_training_data,
+                                     raw_data=use_case_dataset)
