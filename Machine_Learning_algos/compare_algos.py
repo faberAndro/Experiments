@@ -9,11 +9,13 @@ from Machine_Learning_algos.load_and_prepare_data import (
     load_sample_dataset, prepare_trainig_data
 )
 from Machine_Learning_algos.settings import (
-    TREE_GRAPHS_FOLDER, CLASSIFICATION_TYPE_DATASETS, REGRESSION_TYPE_DATASETS
+    TREE_GRAPHS_FOLDER,
+    CLASSIFICATION_TYPE_DATASETS,
+    REGRESSION_TYPE_DATASETS
 )
 
-PROBLEM_TYPE = 'regression'
-DATASETS_CONSIDERED = REGRESSION_TYPE_DATASETS
+PROBLEM_TYPE = 'classification'
+DATASETS_CONSIDERED = CLASSIFICATION_TYPE_DATASETS if PROBLEM_TYPE == 'classification' else REGRESSION_TYPE_DATASETS
 
 
 def use_naive_bayes(training_data: tuple,
