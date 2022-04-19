@@ -1,40 +1,15 @@
 import graphviz
 import numpy as np
 import pandas as pd
-from sklearn import datasets, svm, tree
-from sklearn.model_selection import train_test_split
+from sklearn import svm, tree
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, ComplementNB
 from sklearn.utils import Bunch
 
-COMPLETE_DATASET_NAMES = ['wine', 'iris', 'digits', 'breast cancer', 'diabetes', 'linnerud']
-CLASSIFICATION_TYPE_DATASETS = ['wine', 'iris', 'digits', 'breast cancer']
-MULTI_OUPUT_REGRESSION_TYPE_DATASETS = ['linnerud']
-REGRESSION_TYPE_DATASETS = ['diabetes']
-
-
-def load_sample_dataset(dataset_name: str) -> Bunch:
-    dataset = {}
-    if dataset_name == 'wine':
-        dataset = datasets.load_wine(as_frame=True)
-    elif dataset_name == 'iris':
-        dataset = datasets.load_iris(as_frame=True)
-    elif dataset_name == 'digits':
-        dataset = datasets.load_digits(as_frame=True)
-    elif dataset_name == 'breast cancer':
-        dataset = datasets.load_breast_cancer(as_frame=True)
-    elif dataset_name == 'diabetes':
-        dataset = datasets.load_diabetes(as_frame=True)
-    elif dataset_name == 'linnerud':
-        dataset = datasets.load_linnerud(as_frame=True)
-    return dataset
-
-
-def prepare_trainig_data(dataset, test_size: float = 0.3) -> tuple:
-    training_data = train_test_split(dataset.data,
-                                     dataset.target,
-                                     test_size=test_size,
-                                     random_state=0)
-    return training_data
+from Machine_Learning_algos.load_and_prepare_data import (
+    CLASSIFICATION_TYPE_DATASETS,
+    REGRESSION_TYPE_DATASETS,
+    load_sample_dataset, prepare_trainig_data
+)
 
 
 def use_naive_bayes(training_data: tuple,

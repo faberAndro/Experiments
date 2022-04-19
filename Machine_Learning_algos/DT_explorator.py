@@ -1,4 +1,4 @@
-from Machine_Learning_algos import load_sample_datasets as lsd
+from Machine_Learning_algos import load_and_prepare_data as lsd
 from sklearn import tree
 import graphviz
 import pandas as pd
@@ -104,4 +104,3 @@ if visualise_data:
 
     # graph = pydotplus.graph_from_dot_data(dot_data)
     # graph.write_png('test_DT3.png')
-

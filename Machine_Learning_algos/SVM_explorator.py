@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn import svm
-from load_sample_datasets import load_data
+from load_and_prepare_data import load_data
 
 X_train, X_test, y_train, y_test, df = load_data()
 
@@ -11,8 +11,6 @@ X, y_true = make_blobs(n_samples=500, centers=2, cluster_std=0.7, random_state=0
 plt.scatter(X[:, 0], X[:, 1], s=20)
 
 # PLOTTING SVM BEHAVIOURS TO DIFFERENT VALUES OF 'C':
-
-
 
 # USING SVM
 def use_svm(c):
