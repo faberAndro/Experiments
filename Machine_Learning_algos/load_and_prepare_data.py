@@ -2,18 +2,13 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.utils import Bunch
 
-COMPLETE_DATASET_NAMES = ['wine', 'iris', 'digits', 'breast cancer', 'diabetes', 'linnerud']
-CLASSIFICATION_TYPE_DATASETS = ['wine', 'iris', 'digits', 'breast cancer']
-MULTI_OUPUT_REGRESSION_TYPE_DATASETS = ['linnerud']
-REGRESSION_TYPE_DATASETS = ['diabetes']
-
 
 def load_sample_dataset(dataset_name: str) -> Bunch:
     """
 
     :param dataset_name: can be one of the followings:
          'wine', 'iris', 'digits', 'breast cancer', 'diabetes', 'linnerud'
-         For more details see the "load_and_prepare_data.py" module
+         For more details see the "settings.py" module
     :return: a sklearn Bunch dataset, completed with pandas datatypes.
     """
     dataset = {}

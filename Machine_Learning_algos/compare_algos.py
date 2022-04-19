@@ -6,10 +6,14 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, Compleme
 from sklearn.utils import Bunch
 
 from Machine_Learning_algos.load_and_prepare_data import (
-    CLASSIFICATION_TYPE_DATASETS,
-    REGRESSION_TYPE_DATASETS,
     load_sample_dataset, prepare_trainig_data
 )
+from Machine_Learning_algos.settings import (
+    TREE_GRAPHS_FOLDER, CLASSIFICATION_TYPE_DATASETS, REGRESSION_TYPE_DATASETS
+)
+
+PROBLEM_TYPE = 'regression'
+DATASETS_CONSIDERED = REGRESSION_TYPE_DATASETS
 
 
 def use_naive_bayes(training_data: tuple,
@@ -37,7 +41,7 @@ def use_decision_tree(training_data: tuple,
                       tree_graph_filename: str = 'DtreeGraph',
                       plot_and_save: bool = True) -> float:
 
-    output_filename = './dtree_graphs/' + tree_graph_filename
+    output_filename = TREE_GRAPHS_FOLDER / tree_graph_filename
     X_train, X_test, y_train, y_test = training_data
     if problem == 'classification':
         clf = tree.DecisionTreeClassifier(criterion='gini',
@@ -48,7 +52,6 @@ def use_decision_tree(training_data: tuple,
     clf = clf.fit(X_train, y_train)
     score = clf.score(X_test, y_test)
     print('Tree score:', score)
-
     # plotting and saving the tree structure and info
     if plot_and_save:
         tree.plot_tree(clf)     # this if you want just a simple plot without saving it to file.
@@ -95,12 +98,10 @@ def use_support_vector_machine(training_data: tuple,
 
 
 if __name__ == '__main__':
-    PROBLEM_TYPE = 'regression'
-
     if PROBLEM_TYPE == 'classification':
         dataset_names = CLASSIFICATION_TYPE_DATASETS
     else:
-        dataset_names = REGRESSION_TYPE_DATASETS
+        dataset_names = DATASETS_CONSIDERED
     results_list = []
     for sample_dataset_name in dataset_names:
         use_case_dataset = load_sample_dataset(sample_dataset_name)
