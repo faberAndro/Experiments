@@ -4,9 +4,8 @@ A toy predictor for Happiness
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 from matplotlib import pyplot as plt
-from settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE
+from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE
 
 # PARAMETERS
 SHOW_INFLUX_GENERATION = False
@@ -23,13 +22,16 @@ INITIAL_LEARNING_RATE = 5*1e-5
 ANIMALS_LIST = ['dog', 'cat', 'bird', 'hamster', 'nothing', 'frog', 'spider', 'mosquito', 'wolf']
 ANIMALS_PROBABILITY = [0.2, 0.2, 0.2, 0.1, 0.5, 0.1, 0.2, 0.3, 0.05]
 ANIMALS_EFFECT = [2.5, 2.5, 2.0, 1.5, 0.0, -0.5, -2.5, -3.0, -3.0]
+ANIMALS = dict(zip(ANIMALS_LIST, ANIMALS_EFFECT))
 SUN_INTENSITY = [-3, -2, -1, 0, 1, 2, 3]
 SUN_BASE_PROBABILITIES = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]
+PLOT_SIMULATION = True
+DEMO_POINTS = 100
 
 np.random.seed(8)
 
 
-def dumping_pulse(yp: int, kappa: int):
+def create_dumping_pulse(yp: int, kappa: int):
     y0 = abs(yp)
     alfa = (y0 - 0.1)/(1 - np.exp(-kappa))
     beta = y0 - alfa
@@ -45,7 +47,7 @@ def compute_influx(pulses, k):
     for i in range(n):
         final_index = min(i+k+1, n)
         extension = final_index - i
-        id = dumping_pulse(pulses[i], k)[:extension]
+        id = create_dumping_pulse(pulses[i], k)[:extension]
         influx[i: final_index] += id
         if SHOW_INFLUX_GENERATION:
             to_plot = np.zeros(n)
@@ -57,13 +59,15 @@ def compute_influx(pulses, k):
     return influx
 
 
-if __name__ == '__main__':
-    # Initialisation
-    animals = dict(zip(ANIMALS_LIST, ANIMALS_EFFECT))
+def simulate_animal_influxes():
     animals_probability = ANIMALS_PROBABILITY/np.linalg.norm(ANIMALS_PROBABILITY, ord=1)
     animals_encountered = np.random.choice(a=ANIMALS_LIST, size=N, p=animals_probability)
-    animals_pulses = list(map(lambda x: animals[x], animals_encountered))
+    animals_pulses = list(map(lambda x: ANIMALS[x], animals_encountered))
     animals_influx = compute_influx(pulses=animals_pulses, k=K)
+    return animals_encountered, animals_pulses, animals_influx
+
+
+def simulate_sun_influxes():
     sun_pulses = np.zeros(N)
     sun_pulses[0] = np.random.choice(a=SUN_INTENSITY, size=1)[0]
     for i in range(N):
@@ -75,38 +79,36 @@ if __name__ == '__main__':
         if VERBOSE:
             print(v, sun_probabilities)
     sun_influx = compute_influx(pulses=sun_pulses, k=K)
+    return sun_pulses, sun_influx
 
+
+def combine_animals_and_sun(animals_pulses, animals_influx, animals_encountered,
+                            sun_pulses, sun_influx):
     # Creating configuration for pulses
     pulses_all = animals_pulses + sun_pulses
     influxes_all = animals_influx + sun_influx
     felicity = np.cumsum(influxes_all)
-    data = pd.DataFrame(columns=['animals', 'sun', 'happiness'])
-    data['animals'] = animals_encountered
-    data['sun'] = sun_pulses
-    data['pulses overall'] = pulses_all
-    data['happiness'] = felicity
+    # data = pd.DataFrame(columns=['animals', 'sun', 'happiness'])
+    # data['animals'] = animals_encountered
+    # data['sun'] = sun_pulses
+    # data['pulses overall'] = pulses_all
+    # data['happiness'] = felicity
+    data = pd.DataFrame(columns=['animals', 'sun', 'happiness', 'pulses_all', 'influxes_all'],
+                        data=np.vstack((animals_influx, sun_pulses, felicity, pulses_all, influxes_all)).transpose())
+    return data
 
-    # Plotting
-    plt.plot(animals_influx, label='animals (influxes)')
-    plt.plot(sun_influx, label='sun (influxes)')
-    plt.plot(influxes_all, label='influx (overall)')
-    plt.plot(felicity, label='happiness')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-    print(np.corrcoef(influxes_all, felicity))
-    print(felicity.mean())
 
+def learn_with_rnn(data):
     # Set up callbacks and checkpoints
+    import tensorflow as tf
     reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.4,
                                                      patience=15, min_lr=1e-9,
                                                      verbose=1, mode='min', min_delta=1)
     # The following outcommented rows to be included as an option during experiments:
     # lr_schedule = tf.keras.callbacks.LearningRateScheduler(
     #     lambda epoch: 1e-6 * 10 ** (epoch / 10))
-    drive_dir = DRIVE_DIR
-    csv_logger = tf.keras.callbacks.CSVLogger(drive_dir + LOG_FILE, append=True)
-    checkpoint_path = drive_dir + CHECKPOINT_FILE
+    csv_logger = tf.keras.callbacks.CSVLogger(DRIVE_DIR + LOG_FILE, append=True)
+    checkpoint_path = DRIVE_DIR + CHECKPOINT_FILE
     cp_callback = tf.keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         verbose=1,
@@ -114,7 +116,7 @@ if __name__ == '__main__':
         save_freq=3 * BATCH_SIZE_IN_TRAINING)
 
     # Transform 'categorical columns' to 'numerical columns'
-    data['animals'] = data['animals'].apply(lambda a: animals[a])
+    data['animals'] = data['animals'].apply(lambda a: ANIMALS[a])
 
     # Generate numpy array for training:
     n_train = int(np.floor(N * TRAIN_FRACTION))
@@ -140,7 +142,7 @@ if __name__ == '__main__':
     model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=metrics)
-    model.save(drive_dir + "saved_happiness_model")
+    model.save(DRIVE_DIR + "saved_happiness_model")
     model.save_weights(checkpoint_path.format(epoch=0))
 
     # Train the RNN
@@ -159,6 +161,26 @@ if __name__ == '__main__':
     # plt.axis([1e-8, 1e-4, 0, 30])
     # plt.semilogx(history.history["lr"], history.history["loss"])
     # plt.show()
+    return history
+
+
+if __name__ == '__main__':
+    # Initialisation
+    animals_encountered, animals_pulses, animals_influx = simulate_animal_influxes()
+    sun_pulses, sun_influx = simulate_sun_influxes()
+    data = combine_animals_and_sun(animals_pulses, animals_influx, animals_encountered,
+                                   sun_pulses, sun_influx)
+    # Plotting
+    if PLOT_SIMULATION:
+        plt.stem(animals_influx[:DEMO_POINTS], label='animals (influxes)', markerfmt='bo')
+        plt.stem(sun_influx[:DEMO_POINTS], label='sun (influxes)', markerfmt='go')
+        plt.stem(data.influxes_all[:DEMO_POINTS], label='influx (overall)', markerfmt='ro')
+        plt.stem(data.happiness[:DEMO_POINTS], label='happiness', markerfmt='yo')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+        print(np.corrcoef(data.influxes_all, data.happiness))
+        print(data.happiness.mean())
 
     # todo: Next steps:
     # normalise numbers:
