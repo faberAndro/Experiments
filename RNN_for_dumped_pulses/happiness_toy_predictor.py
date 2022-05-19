@@ -7,11 +7,25 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE
 
-# PARAMETERS
-SHOW_INFLUX_GENERATION = False
-VERBOSE = False
-N = 30000
-K = 10
+# ***** General parameters
+N = 30000   # number of data points generated
+K = 10  # parameter for the "speed" of exponential decay
+np.random.seed(8)   # for repeatibility in pulses random generation
+SHOW_INFLUX_GENERATION = False  # if TRUE, plots of impulses' decay are generated
+
+# ***** parameters for animals' simualation
+ANIMALS_LIST = ['dog', 'cat', 'bird', 'hamster', 'nothing', 'frog', 'spider', 'mosquito', 'wolf']
+ANIMALS_PROBABILITY = [0.2, 0.2, 0.2, 0.1, 0.5, 0.1, 0.2, 0.3, 0.05]
+ANIMALS_EFFECT = [2.5, 2.5, 2.0, 1.5, 0.0, -0.5, -2.5, -3.0, -3.0]
+ANIMALS = dict(zip(ANIMALS_LIST, ANIMALS_EFFECT))
+
+# ***** parameters for sun simulation
+SUN_INTENSITY = [-3, -2, -1, 0, 1, 2, 3]
+SUN_BASE_PROBABILITIES = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]
+PLOT_SIMULATION = True
+DEMO_POINTS = 100
+
+# ***** parameters for RNN
 TRAIN_FRACTION = 0.8
 WINDOW_SIZE = 64
 BATCH_SIZE = 512
@@ -19,19 +33,9 @@ BATCH_SIZE_IN_TRAINING = 512
 EPOCHS = 5       # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 RNN_OUTPUT_FACTOR_CORRECTION = 1000.0
 INITIAL_LEARNING_RATE = 5*1e-5
-ANIMALS_LIST = ['dog', 'cat', 'bird', 'hamster', 'nothing', 'frog', 'spider', 'mosquito', 'wolf']
-ANIMALS_PROBABILITY = [0.2, 0.2, 0.2, 0.1, 0.5, 0.1, 0.2, 0.3, 0.05]
-ANIMALS_EFFECT = [2.5, 2.5, 2.0, 1.5, 0.0, -0.5, -2.5, -3.0, -3.0]
-ANIMALS = dict(zip(ANIMALS_LIST, ANIMALS_EFFECT))
-SUN_INTENSITY = [-3, -2, -1, 0, 1, 2, 3]
-SUN_BASE_PROBABILITIES = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]
-PLOT_SIMULATION = True
-DEMO_POINTS = 100
-
-np.random.seed(8)
 
 
-def create_dumping_pulse(yp: int, kappa: int):
+def create_dumping_pulse(yp: int, kappa: int = K):
     y0 = abs(yp)
     alfa = (y0 - 0.1)/(1 - np.exp(-kappa))
     beta = y0 - alfa
@@ -59,15 +63,17 @@ def compute_influx(pulses, k):
     return influx
 
 
-def simulate_animal_influxes():
+def generate_animal_influxes_simulation():
     animals_probability = ANIMALS_PROBABILITY/np.linalg.norm(ANIMALS_PROBABILITY, ord=1)
     animals_encountered = np.random.choice(a=ANIMALS_LIST, size=N, p=animals_probability)
-    animals_pulses = list(map(lambda x: ANIMALS[x], animals_encountered))
+    animals_pulses = np.asarray(list(map(lambda x: ANIMALS[x], animals_encountered)))
     animals_influx = compute_influx(pulses=animals_pulses, k=K)
-    return animals_encountered, animals_pulses, animals_influx
+    return animals_pulses, animals_influx
 
 
-def simulate_sun_influxes():
+def generate_sun_influxes_simulation():
+    # this function is different from the animal function, because ensure that there is not too much oscillation between
+    # the level of sun in one day and in the following one (not too crazy weather but smooth enough to be real)
     sun_pulses = np.zeros(N)
     sun_pulses[0] = np.random.choice(a=SUN_INTENSITY, size=1)[0]
     for i in range(N):
@@ -76,13 +82,11 @@ def simulate_sun_influxes():
         sun_probabilities = SUN_BASE_PROBABILITIES[c - v: c - v + c + 1]
         sun_probabilities_real = sun_probabilities / np.linalg.norm(sun_probabilities, ord=1)
         sun_pulses[i] = np.random.choice(a=SUN_INTENSITY, size=1, p=sun_probabilities_real)[0]
-        if VERBOSE:
-            print(v, sun_probabilities)
     sun_influx = compute_influx(pulses=sun_pulses, k=K)
     return sun_pulses, sun_influx
 
 
-def combine_animals_and_sun(animals_pulses, animals_influx, animals_encountered,
+def combine_animals_and_sun(animals_pulses, animals_influx,
                             sun_pulses, sun_influx):
     # Creating configuration for pulses
     pulses_all = animals_pulses + sun_pulses
@@ -98,7 +102,32 @@ def combine_animals_and_sun(animals_pulses, animals_influx, animals_encountered,
     return data
 
 
+def plot_simulation(kind, pulses, influx):
+    plt.figure()
+    markerline, stemlines, baseline = plt.stem(pulses[:DEMO_POINTS],
+                                               label=f'{kind}\' pulses',
+                                               markerfmt='ro')
+    plt.setp(stemlines, 'color', plt.getp(markerline, 'color'))
+    plt.setp(stemlines, 'linestyle', 'dotted')
+    plt.setp(markerline, markersize=2)
+    plt.plot(influx[:DEMO_POINTS],
+             label=f'{kind}\' influx',
+             color='grey',
+             linewidth=2)
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
 def learn_with_rnn(data):
+    # todo: Next steps:
+    # normalise numbers:
+    # within an input sequence, let's set up the last 'happiness' number to 1.
+    # Then, convert the former ones to ratios with the previous number.
+    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
+    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
+    # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
+    # Finally, it's important to check the WINDOW_SIZE depending on the maximum pulse duration
     # Set up callbacks and checkpoints
     import tensorflow as tf
     reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.4,
@@ -166,27 +195,13 @@ def learn_with_rnn(data):
 
 if __name__ == '__main__':
     # Initialisation
-    animals_encountered, animals_pulses, animals_influx = simulate_animal_influxes()
-    sun_pulses, sun_influx = simulate_sun_influxes()
-    data = combine_animals_and_sun(animals_pulses, animals_influx, animals_encountered,
+    animals_pulses, animals_influx = generate_animal_influxes_simulation()
+    sun_pulses, sun_influx = generate_sun_influxes_simulation()
+    data = combine_animals_and_sun(animals_pulses, animals_influx,
                                    sun_pulses, sun_influx)
     # Plotting
     if PLOT_SIMULATION:
-        plt.stem(animals_influx[:DEMO_POINTS], label='animals (influxes)', markerfmt='bo')
-        plt.stem(sun_influx[:DEMO_POINTS], label='sun (influxes)', markerfmt='go')
-        plt.stem(data.influxes_all[:DEMO_POINTS], label='influx (overall)', markerfmt='ro')
-        plt.stem(data.happiness[:DEMO_POINTS], label='happiness', markerfmt='yo')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        plot_simulation(kind='animals', pulses=animals_pulses, influx=animals_influx)
+        plot_simulation(kind='sun', pulses=sun_pulses, influx=sun_influx)
         print(np.corrcoef(data.influxes_all, data.happiness))
         print(data.happiness.mean())
-
-    # todo: Next steps:
-    # normalise numbers:
-    # within an input sequence, let's set up the last 'happiness' number to 1.
-    # Then, convert the former ones to ratios with the previous number.
-    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
-    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
-    # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
-    # Finally, it's important to check the WINDOW_SIZE depending on the maximum pulse duration
