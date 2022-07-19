@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE
+from sklearn.model_selection import train_test_split
 
 # ***** General parameters
 N = 30000   # number of data points generated
@@ -106,7 +107,8 @@ def plot_simulation(kind, pulses, influx):
     plt.figure()
     markerline, stemlines, baseline = plt.stem(pulses[:DEMO_POINTS],
                                                label=f'{kind}\' pulses',
-                                               markerfmt='ro')
+                                               markerfmt='ro',
+                                               use_line_collection=True)
     plt.setp(stemlines, 'color', plt.getp(markerline, 'color'))
     plt.setp(stemlines, 'linestyle', 'dotted')
     plt.setp(markerline, markersize=2)
@@ -119,17 +121,40 @@ def plot_simulation(kind, pulses, influx):
     plt.show()
 
 
-def learn_with_rnn(data):
-    # todo: Next steps:
-    # normalise numbers:
-    # within an input sequence, let's set up the last 'happiness' number to 1.
-    # Then, convert the former ones to ratios with the previous number.
-    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
-    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
-    # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
-    # Finally, it's important to check the WINDOW_SIZE depending on the maximum pulse duration
-    # Set up callbacks and checkpoints
+def learn_with_rnn(pulses, influxes):
+    # Animal pulses are input. Animal influx is output (y hat)
     import tensorflow as tf
+
+    # 1. PREPARE TRAINING DATA:
+    training_data, X_test, Y_train, Y_test = train_test_split(
+        pulses, influxes, test_size=1-TRAIN_FRACTION, random_state=0)
+    n_train = int(np.floor(N * TRAIN_FRACTION))
+    true_number_of_data = n_train - WINDOW_SIZE + 1
+    feature_columns = ['animals', 'sun']
+
+    # 2. BUILD RNN ARCHITECTURE:
+    model = tf.keras.models.Sequential(
+        [
+            tf.keras.layers.Dense(units=WINDOW_SIZE, input_shape=(WINDOW_SIZE, 2)),
+            # it doesn't have sense to make the network bidirectional here: type to be changed
+            tf.keras.layers.LSTM(units=64, activation='swish'),
+            tf.keras.layers.Dense(units=1, activation='swish'),
+            tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
+        ]
+    )
+    optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LEARNING_RATE)
+    loss = tf.keras.losses.MeanAbsoluteError()
+    metrics = ["mape"]  # maybe metric to be changed with a better one
+    model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=metrics)
+
+    # 3. SET DATA SAVE & CHECKPOINTS
+    model.save(DRIVE_DIR + "saved_happiness_model")
+    checkpoint_path = DRIVE_DIR + CHECKPOINT_FILE
+    model.save_weights(checkpoint_path.format(epoch=0))
+
+    # 4. SET TRAINING PARAMETERS
     reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.4,
                                                      patience=15, min_lr=1e-9,
                                                      verbose=1, mode='min', min_delta=1)
@@ -137,44 +162,14 @@ def learn_with_rnn(data):
     # lr_schedule = tf.keras.callbacks.LearningRateScheduler(
     #     lambda epoch: 1e-6 * 10 ** (epoch / 10))
     csv_logger = tf.keras.callbacks.CSVLogger(DRIVE_DIR + LOG_FILE, append=True)
-    checkpoint_path = DRIVE_DIR + CHECKPOINT_FILE
     cp_callback = tf.keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         verbose=1,
         save_weights_only=True,
-        save_freq=3 * BATCH_SIZE_IN_TRAINING)
-
-    # Transform 'categorical columns' to 'numerical columns'
-    data['animals'] = data['animals'].apply(lambda a: ANIMALS[a])
-
-    # Generate numpy array for training:
-    n_train = int(np.floor(N * TRAIN_FRACTION))
-    training_data = data[:n_train]
-    test_data = data[n_train:]
-    true_number_of_data = n_train - WINDOW_SIZE + 1
-    whole_batches_number = int(true_number_of_data // BATCH_SIZE)
-    feature_columns = ['animals', 'sun']
-
-    # Preparing RNN:
-    model = tf.keras.models.Sequential(
-        [
-            tf.keras.layers.Dense(units=WINDOW_SIZE, input_shape=(WINDOW_SIZE, 2)),
-            # tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=128, activation='swish', return_sequences=True)),
-            tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, activation='swish')),
-            tf.keras.layers.Dense(units=1, activation='swish'),
-            tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
-        ]
+        save_freq=3 * BATCH_SIZE_IN_TRAINING
     )
-    optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LEARNING_RATE)
-    loss = tf.keras.losses.MeanAbsoluteError()
-    metrics = ["mape"]
-    model.compile(loss=loss,
-                  optimizer=optimizer,
-                  metrics=metrics)
-    model.save(DRIVE_DIR + "saved_happiness_model")
-    model.save_weights(checkpoint_path.format(epoch=0))
 
-    # Train the RNN
+    # 5. TRAIN THE RNN
     batch_of_features = np.asarray([training_data.iloc[i: i + WINDOW_SIZE][feature_columns].to_numpy()
                                     for i in range(true_number_of_data)])
     batch_of_labels = training_data['happiness'].iloc[WINDOW_SIZE - 1:].to_numpy()
@@ -190,6 +185,17 @@ def learn_with_rnn(data):
     # plt.axis([1e-8, 1e-4, 0, 30])
     # plt.semilogx(history.history["lr"], history.history["loss"])
     # plt.show()
+
+    # todo: Next steps:
+    # normalise numbers:
+    # within an input sequence, let's set up the last 'happiness' number to 1.
+    # Then, convert the former ones to ratios with the previous number.
+    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
+    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
+    # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
+    # Finally, it's important to check the WINDOW_SIZE depending on the maximum pulse duration
+    # Set up callbacks and checkpoints
+
     return history
 
 
