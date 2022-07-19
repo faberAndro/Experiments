@@ -58,7 +58,7 @@ def compute_influx(pulse_heights: np.array,
             x_stream[i: i + len(pulse_points)] = pulse_points
             plt.plot(x_stream)
             plt.show()
-    return influx
+    return influx[:n]
 
 
 def generate_influxes_simulation(**kwargs):
@@ -69,7 +69,31 @@ def generate_influxes_simulation(**kwargs):
     """
     pulses_train = np.random.randint(MPH + 1, size=N)
     influx = compute_influx(pulses_train, **kwargs)
-    return influx
+    return pulses_train, influx
+
+
+def prepare_training_set(x, y):
+    """
+    Prepare the training sample of shape (Batch_dim, time_steps, 1)
+    timesteps will be equal to MPH
+    We will then have a bunch of MPH-length arrays
+
+    :param x:
+    :param y:
+    :return:
+    """
+    from sklearn.model_selection import train_test_split
+    max_index = len(x) - MPH + 1
+    # creates all the possible (and ordered) sequences from the training sample.
+    sequences = np.asarray([x[i: i + MPH] for i in range(max_index)])
+    y_hat = y[(MPH - 1):]
+    _X_train, _X_test, _Y_train, _Y_test = train_test_split(sequences, y_hat,
+                                                            test_size=0.2,
+                                                            random_state=1,
+                                                            shuffle=True,
+                                                            stratify=None)
+
+    return sequences, y_hat, _X_train, _X_test, _Y_train, _Y_test
 
 
 def learn_with_rnn(pulses, influxes):
@@ -152,13 +176,7 @@ def learn_with_rnn(pulses, influxes):
 
 
 if __name__ == '__main__':
-    # Initialisation
-    influxes = generate_influxes_simulation(sample_plot=True,
-                                            max_pulse=False)
-    plt.plot(influxes)
-    # Plotting
-    if False:
-        plot_simulation(kind='animals', pulses=animals_pulses, influx=animals_influx)
-        plot_simulation(kind='sun', pulses=sun_pulses, influx=sun_influx)
-        print(np.corrcoef(data.influxes_all, data.happiness))
-        print(data.happiness.mean())
+    pulses, effects = generate_influxes_simulation(sample_plot=False,
+                                                   max_pulse=False)
+    # plt.plot(effects)
+    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects)
