@@ -17,7 +17,7 @@ MAX_PULSE_TO_PLOT = 200
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
 BATCH_SIZE = 128
-EPOCHS = 30       # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
+EPOCHS = 30     # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 RNN_OUTPUT_FACTOR_CORRECTION = 1000.0
 INITIAL_LEARNING_RATE = 5*1e-5
 
@@ -137,7 +137,6 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
     )
 
     # 5. TRAIN THE RNN
-    Y_train.reshape(Y_train.shape[0], 1)
     dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
     dataset = dataset.batch(batch_size=BATCH_SIZE)
     prepared_dataset = dataset.shuffle(buffer_size=X_train.shape[1], reshuffle_each_iteration=True)
@@ -162,6 +161,8 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
 
     return history
     # todo: add use of tensorboard
+    # todo: evaluate with the test set now!!
+    # fix the bug to save the model!
 
 
 if __name__ == '__main__':

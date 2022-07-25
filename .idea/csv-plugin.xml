@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\RNN_for_dumped_pulses\RNN_states\model_history_log.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\financial_analysis\Stocks_list_MTD\MacroTrends_Data_Download_A.csv">
           <value>
             <Attribute>
