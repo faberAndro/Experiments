@@ -49,19 +49,19 @@ def compute_influx(pulse_heights: np.array,
     :return:
     """
     n = len(pulse_heights)
-    influx = np.zeros(n + MPH*2)
+    _effect = np.zeros(n + MPH*2)
     for i in range(n):
-        pulse_points = create_dumping_pulse(pulse_heights[i], **kwargs)
-        influx[i: i + len(pulse_points)] += pulse_points
+        single_influx = create_dumping_pulse(pulse_heights[i], **kwargs)
+        _effect[i: i + len(single_influx)] += single_influx
         if sample_plot and i <= MAX_PULSE_TO_PLOT:
             x_stream = np.zeros(n + MPH*2)
-            x_stream[i: i + len(pulse_points)] = pulse_points
+            x_stream[i: i + len(single_influx)] = single_influx
             plt.plot(x_stream)
             plt.show()
-    return influx[:n]
+    return _effect[:n]
 
 
-def generate_influxes_simulation(**kwargs):
+def generate_effect_simulation(**kwargs):
     """
 
     :param kwargs: max_pulse, sample_plot
@@ -96,36 +96,25 @@ def prepare_training_set(x, y):
     return sequences, y_hat, _X_train, _X_test, _Y_train, _Y_test
 
 
-def learn_with_rnn(pulses, influxes):
-    # Animal pulses are input. Animal influx is output (y hat)
+def learn_with_rnn(X_train, X_test, Y_train, Y_test):
     import tensorflow as tf
-    from sklearn.model_selection import train_test_split
 
-    # 1. PREPARE TRAINING DATA:
-    training_data, X_test, Y_train, Y_test = train_test_split(
-        pulses, influxes, test_size=1-TRAIN_FRACTION, random_state=0)
-    n_train = int(np.floor(N * TRAIN_FRACTION))
-    true_number_of_data = n_train - WINDOW_SIZE + 1
-    feature_columns = ['animals', 'sun']
-
-    # 2. BUILD RNN ARCHITECTURE:
+    # 1. BUILD RNN ARCHITECTURE:
     model = tf.keras.models.Sequential(
         [
-            tf.keras.layers.Dense(units=WINDOW_SIZE, input_shape=(WINDOW_SIZE, 2)),
-            # it doesn't have sense to make the network bidirectional here: type to be changed
-            tf.keras.layers.LSTM(units=64, activation='swish'),
-            tf.keras.layers.Dense(units=1, activation='swish'),
-            tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
+            tf.keras.layers.LSTM(units=64, activation='tanh', input_shape=(X_train.shape[1], 1)),
+            tf.keras.layers.Dense(units=1),     # try also "swish. This neuron has no activation f."
+            # tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
         ]
     )
     optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LEARNING_RATE)
     loss = tf.keras.losses.MeanAbsoluteError()
-    metrics = ["mape"]  # maybe metric to be changed with a better one
+    metrics = ["mae"]
     model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=metrics)
 
-    # 3. SET DATA SAVE & CHECKPOINTS
+    # 2. SET DATA SAVE & CHECKPOINTS
     model.save(DRIVE_DIR + "saved_happiness_model")
     checkpoint_path = DRIVE_DIR + CHECKPOINT_FILE
     model.save_weights(checkpoint_path.format(epoch=0))
@@ -176,7 +165,7 @@ def learn_with_rnn(pulses, influxes):
 
 
 if __name__ == '__main__':
-    pulses, effects = generate_influxes_simulation(sample_plot=False,
-                                                   max_pulse=False)
+    pulses, effects = generate_effect_simulation(sample_plot=False,
+                                                 max_pulse=False)
     # plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects)
