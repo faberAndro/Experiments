@@ -4,21 +4,20 @@ A sample RNN to learn superposition of pulses that dump over
 
 import numpy as np
 from matplotlib import pyplot as plt
-from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE
+from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE, LOCAL_SAVING_DIR, \
+    LOCAL_CHECKPOINT_FILE, LOCAL_LOG_FILE
 
 # np.random.seed(8)   # for repeatibility in pulses random generation
 
 # ***** parameters for pulses' generation
-N = 300   # number of pulses generated
+N = 50000   # number of pulses generated (data points)
 MPH = 10  # max pulse height
 MAX_PULSE_TO_PLOT = 200
 
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
-WINDOW_SIZE = 64
-BATCH_SIZE = 512
-BATCH_SIZE_IN_TRAINING = 512
-EPOCHS = 5       # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
+BATCH_SIZE = 128
+EPOCHS = 30       # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 RNN_OUTPUT_FACTOR_CORRECTION = 1000.0
 INITIAL_LEARNING_RATE = 5*1e-5
 
@@ -102,7 +101,9 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
     # 1. BUILD RNN ARCHITECTURE:
     model = tf.keras.models.Sequential(
         [
-            tf.keras.layers.LSTM(units=64, activation='tanh', input_shape=(X_train.shape[1], 1)),
+            tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1),
+                                   input_shape=[None]),
+            tf.keras.layers.LSTM(units=64, activation='tanh'),
             tf.keras.layers.Dense(units=1),     # try also "swish. This neuron has no activation f."
             # tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
         ]
@@ -115,9 +116,10 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
                   metrics=metrics)
 
     # 2. SET DATA SAVE & CHECKPOINTS
-    model.save(DRIVE_DIR + "saved_happiness_model")
-    checkpoint_path = DRIVE_DIR + CHECKPOINT_FILE
-    model.save_weights(checkpoint_path.format(epoch=0))
+    # model.save('my_model')
+    checkpoint_path = str(LOCAL_SAVING_DIR / LOCAL_CHECKPOINT_FILE.format(epoch=0))
+    # model.save_weights(checkpoint_path)
+    # todo: double check checkpoint documentation
 
     # 4. SET TRAINING PARAMETERS
     reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.4,
@@ -126,21 +128,21 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
     # The following outcommented rows to be included as an option during experiments:
     # lr_schedule = tf.keras.callbacks.LearningRateScheduler(
     #     lambda epoch: 1e-6 * 10 ** (epoch / 10))
-    csv_logger = tf.keras.callbacks.CSVLogger(DRIVE_DIR + LOG_FILE, append=True)
+    csv_logger = tf.keras.callbacks.CSVLogger(LOCAL_SAVING_DIR / LOCAL_LOG_FILE, append=True)
     cp_callback = tf.keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         verbose=1,
         save_weights_only=True,
-        save_freq=3 * BATCH_SIZE_IN_TRAINING
+        save_freq=3 * BATCH_SIZE
     )
 
     # 5. TRAIN THE RNN
-    batch_of_features = np.asarray([training_data.iloc[i: i + WINDOW_SIZE][feature_columns].to_numpy()
-                                    for i in range(true_number_of_data)])
-    batch_of_labels = training_data['happiness'].iloc[WINDOW_SIZE - 1:].to_numpy()
-    history = model.fit(x=batch_of_features,
-                        y=batch_of_labels,
-                        batch_size=BATCH_SIZE_IN_TRAINING,
+    Y_train.reshape(Y_train.shape[0], 1)
+    dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
+    dataset = dataset.batch(batch_size=BATCH_SIZE)
+    prepared_dataset = dataset.shuffle(buffer_size=X_train.shape[1], reshuffle_each_iteration=True)
+
+    history = model.fit(prepared_dataset,
                         epochs=EPOCHS,
                         shuffle=True,
                         callbacks=[reduce_lr, csv_logger, cp_callback]
@@ -150,18 +152,16 @@ def learn_with_rnn(X_train, X_test, Y_train, Y_test):
     # plt.axis([1e-8, 1e-4, 0, 30])
     # plt.semilogx(history.history["lr"], history.history["loss"])
     # plt.show()
-
     # todo: Next steps:
-    # normalise numbers:
+    # normalise numbers?
     # within an input sequence, let's set up the last 'happiness' number to 1.
     # Then, convert the former ones to ratios with the previous number.
     # This way, we have all numbers in the vicinity of '1', and the NN will work better.
     # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
     # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
-    # Finally, it's important to check the WINDOW_SIZE depending on the maximum pulse duration
-    # Set up callbacks and checkpoints
 
     return history
+    # todo: add use of tensorboard
 
 
 if __name__ == '__main__':
@@ -169,3 +169,5 @@ if __name__ == '__main__':
                                                  max_pulse=False)
     # plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects)
+    history = learn_with_rnn(X_train, X_test, Y_train, Y_test)
+    plt.plot(history.epoch, history.history['loss'])
