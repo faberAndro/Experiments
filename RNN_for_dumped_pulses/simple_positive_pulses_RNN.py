@@ -1,25 +1,23 @@
 """
 A sample RNN to learn superposition of pulses that dump over
 """
+import os
+from datetime import datetime
 
 import numpy as np
 from matplotlib import pyplot as plt
-from RNN_for_dumped_pulses.settings import DRIVE_DIR, LOG_FILE, CHECKPOINT_FILE, LOCAL_SAVING_DIR, \
-    LOCAL_CHECKPOINT_FILE, LOCAL_LOG_FILE
-
-# np.random.seed(8)   # for repeatibility in pulses random generation
+from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME
 
 # ***** parameters for pulses' generation
-N = 50000   # number of pulses generated (data points)
+N = 300000  # number of pulses generated (data points)
 MPH = 10  # max pulse height
+SL = MPH   # sequence length: number of time steps passed each time to the RNN
 MAX_PULSE_TO_PLOT = 200
-
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
-BATCH_SIZE = 128
-EPOCHS = 30     # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
-RNN_OUTPUT_FACTOR_CORRECTION = 1000.0
-INITIAL_LEARNING_RATE = 5*1e-5
+BATCH_SIZE = 256
+EPOCHS = 20  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
+INITIAL_LEARNING_RATE = 5 * 1e-5
 
 
 def create_dumping_pulse(n: int,
@@ -48,12 +46,12 @@ def compute_influx(pulse_heights: np.array,
     :return:
     """
     n = len(pulse_heights)
-    _effect = np.zeros(n + MPH*2)
+    _effect = np.zeros(n + MPH * 2)
     for i in range(n):
         single_influx = create_dumping_pulse(pulse_heights[i], **kwargs)
         _effect[i: i + len(single_influx)] += single_influx
         if sample_plot and i <= MAX_PULSE_TO_PLOT:
-            x_stream = np.zeros(n + MPH*2)
+            x_stream = np.zeros(n + MPH * 2)
             x_stream[i: i + len(single_influx)] = single_influx
             plt.plot(x_stream)
             plt.show()
@@ -71,21 +69,24 @@ def generate_effect_simulation(**kwargs):
     return pulses_train, influx
 
 
-def prepare_training_set(x, y):
+def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
     """
     Prepare the training sample of shape (Batch_dim, time_steps, 1)
-    timesteps will be equal to MPH
-    We will then have a bunch of MPH-length arrays
+    timesteps will be equal to sl
+    We will then have a bunch of sl-length arrays
 
+    :param sl:
     :param x:
     :param y:
     :return:
     """
     from sklearn.model_selection import train_test_split
-    max_index = len(x) - MPH + 1
-    # creates all the possible (and ordered) sequences from the training sample.
-    sequences = np.asarray([x[i: i + MPH] for i in range(max_index)])
-    y_hat = y[(MPH - 1):]
+    max_len = 2 * sl if variable_len else sl
+    max_index = len(x) - max_len + 1
+    # creates all the possible (and ordered) sequences from the training sample, or r.
+
+    sequences = np.asarray([x[i: i + sl] for i in range(max_index)])
+    y_hat = y[(sl - 1):]
     _X_train, _X_test, _Y_train, _Y_test = train_test_split(sequences, y_hat,
                                                             test_size=0.2,
                                                             random_state=1,
@@ -95,74 +96,64 @@ def prepare_training_set(x, y):
     return sequences, y_hat, _X_train, _X_test, _Y_train, _Y_test
 
 
-def learn_with_rnn(X_train, X_test, Y_train, Y_test):
-    import tensorflow as tf
-
+def learn_with_rnn(x_train: np.array, y_train: np.array):
+    # from tensorflow import keras
+    from tensorflow import data
+    from keras import layers, models, callbacks, losses, optimizers
     # 1. BUILD RNN ARCHITECTURE:
-    model = tf.keras.models.Sequential(
+
+    def expand_dimension(x):
+        from tensorflow import expand_dims
+        return expand_dims(x, axis=-1)
+
+    model = models.Sequential(
         [
-            tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1),
-                                   input_shape=[None]),
-            tf.keras.layers.LSTM(units=64, activation='tanh'),
-            tf.keras.layers.Dense(units=1),     # try also "swish. This neuron has no activation f."
-            # tf.keras.layers.Lambda(lambda x: x * RNN_OUTPUT_FACTOR_CORRECTION)
+            layers.Lambda(expand_dimension,
+                          input_shape=[None]),
+            layers.LSTM(units=64, activation='tanh'),
+            layers.Dense(units=1),  # try also "swish. This neuron has no activation f."
         ]
     )
-    optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LEARNING_RATE)
-    loss = tf.keras.losses.MeanAbsoluteError()
+    optimizer = optimizers.Adam(learning_rate=INITIAL_LEARNING_RATE)
+    loss = losses.MeanAbsoluteError()
     metrics = ["mae"]
     model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=metrics)
 
-    # 2. SET DATA SAVE & CHECKPOINTS
-    # model.save('my_model')
-    checkpoint_path = str(LOCAL_SAVING_DIR / LOCAL_CHECKPOINT_FILE.format(epoch=0))
-    # model.save_weights(checkpoint_path)
-    # todo: double check checkpoint documentation
-
-    # 4. SET TRAINING PARAMETERS
-    reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.4,
-                                                     patience=15, min_lr=1e-9,
-                                                     verbose=1, mode='min', min_delta=1)
-    # The following outcommented rows to be included as an option during experiments:
-    # lr_schedule = tf.keras.callbacks.LearningRateScheduler(
-    #     lambda epoch: 1e-6 * 10 ** (epoch / 10))
-    csv_logger = tf.keras.callbacks.CSVLogger(LOCAL_SAVING_DIR / LOCAL_LOG_FILE, append=True)
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(
+    # 2. SET TRAINING PARAMETERS AND CALLBACKS:
+    rnn_info_folder = WORKING_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
+    os.makedirs(rnn_info_folder, exist_ok=True)
+    reduce_lr = callbacks.ReduceLROnPlateau(monitor='loss', factor=0.3,
+                                            patience=5, min_lr=1e-9,
+                                            verbose=1, mode='min', min_delta=0.3)
+    csv_logger = callbacks.CSVLogger(rnn_info_folder / LOG_FILENAME, append=True)
+    checkpoint_path = rnn_info_folder / CHECKPOINT_SUBFOLDER / LOCAL_CHECKPOINT_FILENAME
+    cp_callback = callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         verbose=1,
         save_weights_only=True,
-        save_freq=3 * BATCH_SIZE
+        save_freq='epoch',
+        period=3
     )
+    es_callback = callbacks.EarlyStopping(monitor='loss', patience=5, verbose=0)
 
-    # 5. TRAIN THE RNN
-    dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
+    # 3. TRAIN THE RNN
+    dataset = data.Dataset.from_tensor_slices((x_train, y_train))
     dataset = dataset.batch(batch_size=BATCH_SIZE)
-    prepared_dataset = dataset.shuffle(buffer_size=X_train.shape[1], reshuffle_each_iteration=True)
-
+    prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[1], reshuffle_each_iteration=True)
     history = model.fit(prepared_dataset,
                         epochs=EPOCHS,
                         shuffle=True,
-                        callbacks=[reduce_lr, csv_logger, cp_callback]
+                        callbacks=[reduce_lr, csv_logger, cp_callback, es_callback]
                         )
 
-    # The following outcommented rows to be included as an option during experiments:
-    # plt.axis([1e-8, 1e-4, 0, 30])
-    # plt.semilogx(history.history["lr"], history.history["loss"])
-    # plt.show()
-    # todo: Next steps:
-    # normalise numbers?
-    # within an input sequence, let's set up the last 'happiness' number to 1.
-    # Then, convert the former ones to ratios with the previous number.
-    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
-    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
-    # At this point, numbers will not exhibit any more a high magnitude like thousands of units.
-
+    # 4. SAVE THE MODEL
+    model.save(rnn_info_folder)
     return history
     # todo: add use of tensorboard
     # todo: evaluate with the test set now!!
-    # fix the bug to save the model!
+    # todo: fix the bug to save the model!
 
 
 if __name__ == '__main__':
@@ -170,5 +161,6 @@ if __name__ == '__main__':
                                                  max_pulse=False)
     # plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects)
-    history = learn_with_rnn(X_train, X_test, Y_train, Y_test)
-    plt.plot(history.epoch, history.history['loss'])
+    model_history = learn_with_rnn(X_train, Y_train)
+    model_history.model.evaluate(X_test, Y_test, return_dict=True)
+    plt.plot(model_history.epoch, model_history.history['loss'])

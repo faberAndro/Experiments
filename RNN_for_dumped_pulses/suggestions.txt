@@ -1,0 +1,19 @@
+- A network trained by 10-number sequences responds well to new 10-number sequences, but not to different-length sequences.
+Miserably fails even with sequences whose length is multiple of ten.
+Hence, we need now to try training the network with variable-length-sequences!
+- Add tensorboard!
+------------------------------------------------------
+
+Use np.random.seed(8) for repeatibility in pulses random generation
+The following to be included as an option during experiments:
+   lr_schedule = tf.keras.callbacks.LearningRateScheduler(lambda epoch: 1e-6 * 10 ** (epoch / 10))
+The following outcommented rows to be included as an option during experiments:
+    # plt.axis([1e-8, 1e-4, 0, 30])
+    # plt.semilogx(history.history["lr"], history.history["loss"])
+    # plt.show()
+    # normalise numbers?
+    # within an input sequence, let's set up the last 'happiness' number to 1.
+    # Then, convert the former ones to ratios with the previous number.
+    # This way, we have all numbers in the vicinity of '1', and the NN will work better.
+    # The maximum difference of ratio will be the sum of N.2 maximum pulses, that is 3+3=6.
+    # At this point, numbers will not exhibit anymore a high magnitude like thousands of units.
