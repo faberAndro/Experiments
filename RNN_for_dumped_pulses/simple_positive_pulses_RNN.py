@@ -12,6 +12,7 @@ from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT
 N = 300000  # number of pulses generated (data points)
 MPH = 10  # max pulse height
 SL = MPH   # sequence length: number of time steps passed each time to the RNN
+RANDOM_LEN = True   # sequences are created with random length between SL and 2*SL
 MAX_PULSE_TO_PLOT = 200
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
@@ -75,6 +76,7 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
     timesteps will be equal to sl
     We will then have a bunch of sl-length arrays
 
+    :param variable_len:
     :param sl:
     :param x:
     :param y:
@@ -83,10 +85,13 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
     from sklearn.model_selection import train_test_split
     max_len = 2 * sl if variable_len else sl
     max_index = len(x) - max_len + 1
-    # creates all the possible (and ordered) sequences from the training sample, or r.
-
-    sequences = np.asarray([x[i: i + sl] for i in range(max_index)])
-    y_hat = y[(sl - 1):]
+    # creates all the possible (and ordered) sequences from the training sample, or random-length sequences.
+    sequences, y_hat = [], []
+    # the following may be vectorised
+    for i in range(max_index):
+        random_len = np.random.randint(sl, max_len + 1)
+        sequences.append(x[i: i + random_len])
+        y_hat.append(y[i + random_len - 1])
     _X_train, _X_test, _Y_train, _Y_test = train_test_split(sequences, y_hat,
                                                             test_size=0.2,
                                                             random_state=1,
@@ -160,7 +165,7 @@ if __name__ == '__main__':
     pulses, effects = generate_effect_simulation(sample_plot=False,
                                                  max_pulse=False)
     # plt.plot(effects)
-    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects)
+    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects, variable_len=True)
     model_history = learn_with_rnn(X_train, Y_train)
     model_history.model.evaluate(X_test, Y_test, return_dict=True)
     plt.plot(model_history.epoch, model_history.history['loss'])
