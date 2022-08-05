@@ -7,17 +7,19 @@ from datetime import datetime
 import numpy as np
 from matplotlib import pyplot as plt
 from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME
+from tensorflow import data
+from keras import layers, models, callbacks, losses, optimizers
 
 # ***** parameters for pulses' generation
-N = 300000  # number of pulses generated (data points)
+N = 1000  # number of pulses generated (data points)
 MPH = 10  # max pulse height
 SL = MPH   # sequence length: number of time steps passed each time to the RNN
 RANDOM_LEN = True   # sequences are created with random length between SL and 2*SL
 MAX_PULSE_TO_PLOT = 200
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
+EPOCHS = 2  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 BATCH_SIZE = 256
-EPOCHS = 20  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 INITIAL_LEARNING_RATE = 5 * 1e-5
 
 
@@ -83,30 +85,38 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
     :return:
     """
     from sklearn.model_selection import train_test_split
-    max_len = 2 * sl if variable_len else sl
-    max_index = len(x) - max_len + 1
-    # creates all the possible (and ordered) sequences from the training sample, or random-length sequences.
-    sequences, y_hat = [], []
-    # the following may be vectorised
-    for i in range(max_index):
-        random_len = np.random.randint(sl, max_len + 1)
-        sequences.append(x[i: i + random_len])
-        y_hat.append(y[i + random_len - 1])
+    if variable_len:
+        max_len = 2 * sl
+        max_index = len(x) - max_len + 1
+        # creates all the possible (and ordered) sequences from the training sample, or random-length sequences.
+        sequences, y_hat = [], []
+        # the following may be vectorised
+        for i in range(max_index):
+            random_len = np.random.randint(sl, max_len + 1)
+            sequences.append(x[i: i + random_len])
+            y_hat.append(y[i + random_len - 1])
+    else:
+        max_len = sl
+        max_index = len(x) - max_len + 1
+        sequences = np.asarray([x[i: i + sl] for i in range(max_index)])
+        y_hat = y[(sl - 1):]
     _X_train, _X_test, _Y_train, _Y_test = train_test_split(sequences, y_hat,
                                                             test_size=0.2,
                                                             random_state=1,
                                                             shuffle=True,
                                                             stratify=None)
-
     return sequences, y_hat, _X_train, _X_test, _Y_train, _Y_test
 
 
-def learn_with_rnn(x_train: np.array, y_train: np.array):
-    # from tensorflow import keras
-    from tensorflow import data
-    from keras import layers, models, callbacks, losses, optimizers
-    # 1. BUILD RNN ARCHITECTURE:
+def convert_dataset_to_tf_dataset(x_train, y_train):
+    dataset = data.Dataset.from_tensor_slices((x_train, y_train))
+    dataset = dataset.batch(batch_size=BATCH_SIZE)
+    prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[1], reshuffle_each_iteration=True)
+    return prepared_dataset
 
+
+def learn_with_rnn(dataset):
+    # 1. BUILD RNN ARCHITECTURE:
     def expand_dimension(x):
         from tensorflow import expand_dims
         return expand_dims(x, axis=-1)
@@ -116,7 +126,7 @@ def learn_with_rnn(x_train: np.array, y_train: np.array):
             layers.Lambda(expand_dimension,
                           input_shape=[None]),
             layers.LSTM(units=64, activation='tanh'),
-            layers.Dense(units=1),  # try also "swish. This neuron has no activation f."
+            layers.Dense(units=1)  # try also "swish". This neuron has no activation f.
         ]
     )
     optimizer = optimizers.Adam(learning_rate=INITIAL_LEARNING_RATE)
@@ -144,10 +154,7 @@ def learn_with_rnn(x_train: np.array, y_train: np.array):
     es_callback = callbacks.EarlyStopping(monitor='loss', patience=5, verbose=0)
 
     # 3. TRAIN THE RNN
-    dataset = data.Dataset.from_tensor_slices((x_train, y_train))
-    dataset = dataset.batch(batch_size=BATCH_SIZE)
-    prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[1], reshuffle_each_iteration=True)
-    history = model.fit(prepared_dataset,
+    history = model.fit(dataset,
                         epochs=EPOCHS,
                         shuffle=True,
                         callbacks=[reduce_lr, csv_logger, cp_callback, es_callback]
@@ -166,6 +173,7 @@ if __name__ == '__main__':
                                                  max_pulse=False)
     # plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects, variable_len=True)
-    model_history = learn_with_rnn(X_train, Y_train)
+    dataset = convert_dataset_to_tf_dataset(X_train, Y_train)
+    model_history = learn_with_rnn(dataset)
     model_history.model.evaluate(X_test, Y_test, return_dict=True)
     plt.plot(model_history.epoch, model_history.history['loss'])
