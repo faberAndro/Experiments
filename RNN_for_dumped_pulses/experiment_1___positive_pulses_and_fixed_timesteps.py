@@ -6,8 +6,9 @@ from datetime import datetime
 
 import numpy as np
 from matplotlib import pyplot as plt
-from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME
-from tensorflow import data
+from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME, \
+    SAVED_RNN_DIR
+from tensorflow import data, TensorSpec, as_dtype
 from keras import layers, models, callbacks, losses, optimizers
 
 # ***** parameters for pulses' generation
@@ -95,6 +96,8 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
             random_len = np.random.randint(sl, max_len + 1)
             sequences.append(x[i: i + random_len])
             y_hat.append(y[i + random_len - 1])
+        sequences = np.asarray(sequences)
+        y_hat = np.asarray(y_hat)
     else:
         max_len = sl
         max_index = len(x) - max_len + 1
@@ -111,15 +114,29 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
 def convert_dataset_to_tf_dataset(x_train, y_train):
     dataset = data.Dataset.from_tensor_slices((x_train, y_train))
     dataset = dataset.batch(batch_size=BATCH_SIZE)
+    # todo: is this working with x_train.shape[1] ???
     prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[1], reshuffle_each_iteration=True)
+    return prepared_dataset
+
+
+def convert_vl_dataset_to_tf_dataset(x_train, y_train):
+    dataset = data.Dataset.from_generator(
+        lambda: zip(x_train, y_train),
+        output_signature=(
+            TensorSpec([None, ], dtype=as_dtype(x_train[0].dtype)),
+            TensorSpec([], dtype=as_dtype(y_train.dtype))
+        )
+    )
+    prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[0], reshuffle_each_iteration=True)
     return prepared_dataset
 
 
 def learn_with_rnn(dataset):
     # 1. BUILD RNN ARCHITECTURE:
     def expand_dimension(x):
-        from tensorflow import expand_dims
-        return expand_dims(x, axis=-1)
+        from tensorflow import expand_dims, reshape
+        return reshape(x, [None, None, x.shape[0]])
+        # return expand_dims(x, axis=-1)
 
     model = models.Sequential(
         [
@@ -137,7 +154,7 @@ def learn_with_rnn(dataset):
                   metrics=metrics)
 
     # 2. SET TRAINING PARAMETERS AND CALLBACKS:
-    rnn_info_folder = WORKING_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
+    rnn_info_folder = SAVED_RNN_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
     os.makedirs(rnn_info_folder, exist_ok=True)
     reduce_lr = callbacks.ReduceLROnPlateau(monitor='loss', factor=0.3,
                                             patience=5, min_lr=1e-9,
@@ -161,6 +178,7 @@ def learn_with_rnn(dataset):
                         )
 
     # 4. SAVE THE MODEL
+    # todo: save also the configuration used (number of samples, N epochs, etc.) to a json
     model.save(rnn_info_folder)
     return history
     # todo: add use of tensorboard
@@ -171,8 +189,9 @@ def learn_with_rnn(dataset):
 if __name__ == '__main__':
     pulses, effects = generate_effect_simulation(sample_plot=False,
                                                  max_pulse=False)
-    # plt.plot(effects)
-    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects, variable_len=True)
+    plt.plot(effects)
+    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects,
+                                                                          variable_len=False)
     dataset = convert_dataset_to_tf_dataset(X_train, Y_train)
     model_history = learn_with_rnn(dataset)
     model_history.model.evaluate(X_test, Y_test, return_dict=True)

@@ -14,6 +14,7 @@ LOG_FILE = "model_history_log.csv"
 CHECKPOINT_FILE = "training_2/cp-{epoch:02d}.ckpt"
 
 WORKING_DIR = pathlib.Path(__file__).parent.resolve()
-LOCAL_CHECKPOINT_FILENAME = "cp-{epoch:04d}.ckpt"
+SAVED_RNN_DIR = WORKING_DIR / 'saved_RNN_runs'
+LOCAL_CHECKPOINT_FILENAME = 'cp-{epoch:04d}.ckpt'
 LOG_FILENAME = LOG_FILE
 CHECKPOINT_SUBFOLDER = 'checkpoints'
