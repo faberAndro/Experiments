@@ -5,21 +5,26 @@ import os
 from datetime import datetime
 
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
-from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME, \
-    SAVED_RNN_DIR
+
+from RNN_for_dumped_pulses.settings import (
+    LOG_FILENAME,
+    CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME,
+    SAVED_RNN_DIR)
+
 from tensorflow import data, TensorSpec, as_dtype
 from keras import layers, models, callbacks, losses, optimizers
 
 # ***** parameters for pulses' generation
-N = 1000  # number of pulses generated (data points)
+N = 50000  # number of pulses generated (data points)
 MPH = 10  # max pulse height
 SL = MPH   # sequence length: number of time steps passed each time to the RNN
 RANDOM_LEN = True   # sequences are created with random length between SL and 2*SL
 MAX_PULSE_TO_PLOT = 200
 # ***** parameters for RNN
 TRAIN_FRACTION = 0.8
-EPOCHS = 2  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
+EPOCHS = 20  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
 BATCH_SIZE = 256
 INITIAL_LEARNING_RATE = 5 * 1e-5
 
@@ -87,17 +92,23 @@ def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
     """
     from sklearn.model_selection import train_test_split
     if variable_len:
-        max_len = 2 * sl
-        max_index = len(x) - max_len + 1
-        # creates all the possible (and ordered) sequences from the training sample, or random-length sequences.
         sequences, y_hat = [], []
-        # the following may be vectorised
-        for i in range(max_index):
-            random_len = np.random.randint(sl, max_len + 1)
-            sequences.append(x[i: i + random_len])
-            y_hat.append(y[i + random_len - 1])
-        sequences = np.asarray(sequences)
-        y_hat = np.asarray(y_hat)
+        max_len = 2 * sl
+        max_index = len(x) - max_len
+        for current_len in range(sl, max_len + 1):
+            variable_l_sequences = np.asarray(
+                [x[i: i + current_len] for i in range(max_index)]
+            )  # maybe there is a more performat way here to vectorise
+            # maybe it's possible to use numpy diff for this generation
+            variable_l_y_hat = y[(current_len - 1): (current_len - 1) + max_index]
+            padding_length = max_len - current_len
+            variable_l_sequences = np.pad(
+                variable_l_sequences, ((0, 0), (padding_length, 0)), 'constant'
+            )  # padding left with zeros
+            sequences.append(variable_l_sequences)
+            y_hat.append(variable_l_y_hat)
+        sequences = np.concatenate(sequences, axis=0)
+        y_hat = np.concatenate(y_hat, axis=0)
     else:
         max_len = sl
         max_index = len(x) - max_len + 1
@@ -135,8 +146,8 @@ def learn_with_rnn(dataset):
     # 1. BUILD RNN ARCHITECTURE:
     def expand_dimension(x):
         from tensorflow import expand_dims, reshape
-        return reshape(x, [None, None, x.shape[0]])
-        # return expand_dims(x, axis=-1)
+        # return reshape(x, [None, None, x.shape[0]])
+        return expand_dims(x, axis=-1)
 
     model = models.Sequential(
         [
@@ -186,13 +197,32 @@ def learn_with_rnn(dataset):
     # todo: fix the bug to save the model!
 
 
+def use_saved_model(folder):
+    model = models.load_model(folder)
+    history = pd.read_csv(folder + '/' + LOG_FILENAME)
+    plt.plot(history.epoch, history.mae)
+    return model
+
+
+def predict_value(sequence: list,
+                  model: models):
+    # the last value of the ground truth array should be the one matching the prediction
+    sequence_padded = [0] * (MPH * 2 - len(sequence)) + sequence
+    ground_truth = compute_influx(sequence)
+    prediction = model.predict([sequence_padded])
+    print('sequence_padded', sequence_padded)
+    print('ground truth', ground_truth)
+    print('prediction', prediction)
+    return sequence_padded, ground_truth, prediction
+
+
 if __name__ == '__main__':
     pulses, effects = generate_effect_simulation(sample_plot=False,
                                                  max_pulse=False)
-    plt.plot(effects)
+    # plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects,
-                                                                          variable_len=False)
-    dataset = convert_dataset_to_tf_dataset(X_train, Y_train)
-    model_history = learn_with_rnn(dataset)
+                                                                          variable_len=True)
+    this_dataset = convert_dataset_to_tf_dataset(X_train, Y_train)
+    model_history = learn_with_rnn(this_dataset)
     model_history.model.evaluate(X_test, Y_test, return_dict=True)
     plt.plot(model_history.epoch, model_history.history['loss'])

@@ -3,12 +3,11 @@ A sample RNN to learn superposition of pulses that dump over
 """
 import os
 from datetime import datetime
-
+# todo: see if we can use the tensorflow method in the post for saving and loading, without having to do things
+#  directly with the keras framework.
 import numpy as np
 from matplotlib import pyplot as plt
 from RNN_for_dumped_pulses.settings import WORKING_DIR, LOG_FILENAME, CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME
-from tensorflow import data, TensorSpec, as_dtype
-from keras import layers, models, callbacks, losses, optimizers
 
 # ***** parameters for pulses' generation
 N = 1000  # number of pulses generated (data points)
@@ -72,7 +71,8 @@ def generate_effect_simulation(**kwargs):
     return pulses_train, influx
 
 
-def prepare_vl_training_set(x, y, sl: int = SL):
+def prepare_vl_training_set(x, y,
+                            sl: int = SL):
     """
     Prepare the training sample of shape (Batch_dim, time_steps, 1)
     timesteps will be equal to sl
@@ -84,24 +84,33 @@ def prepare_vl_training_set(x, y, sl: int = SL):
     :param y:
     :return:
     """
-    from sklearn.model_selection import train_test_split
+    # from sklearn.model_selection import train_test_split
     variable_l_sequences, variable_l_y_hat = [], []
-    for max_len in range(sl, 2*sl):
-        max_len = sl
-        max_index = len(x) - max_len + 1
-        sequences = np.asarray([x[i: i + sl] for i in range(max_index)])
-        y_hat = y[(sl - 1):]
+    max_len = 2 * sl
+    max_index = len(x) - max_len
+    for current_len in range(sl, max_len + 1):
+        sequences = np.asarray([x[i: i + current_len] for i in range(max_index)])   # maybe there is a more performat way here to vectorise
+        # maybe it's possible to use numpy diff for this generation
+        y_hat = y[(current_len - 1): (current_len - 1) + max_index]
+        padding_length = max_len - current_len
+        sequences = np.pad(sequences, ((0, 0), (padding_length, 0)), 'constant')   # padding left with zeros
         variable_l_sequences.append(sequences)
         variable_l_y_hat.append(y_hat)
-    _X_train, _X_test, _Y_train, _Y_test = train_test_split(variable_l_sequences,
-                                                            variable_l_y_hat,
-                                                            test_size=0.2,
-                                                            random_state=1,
-                                                            stratify=None)
-    return variable_l_sequences, variable_l_y_hat, _X_train, _X_test, _Y_train, _Y_test
+    variable_l_sequences = np.concatenate(variable_l_sequences, axis=0)
+    variable_l_y_hat = np.concatenate(variable_l_y_hat, axis=0)
+    # _X_train, _X_test, _Y_train, _Y_test = train_test_split(variable_l_sequences,
+    #                                                         variable_l_y_hat,
+    #                                                         shuffle=False,
+    #                                                         test_size=0.2,
+    #                                                         random_state=1,
+    #                                                         stratify=None)
+    return variable_l_sequences, variable_l_y_hat
 
 
 def convert_dataset_to_tf_dataset(x_train, y_train):
+    from tensorflow import data, TensorSpec, as_dtype
+    from keras import layers, models, callbacks, losses, optimizers
+
     dataset = data.Dataset.from_tensor_slices((x_train, y_train))
     dataset = dataset.batch(batch_size=BATCH_SIZE)
     # todo: is this working with x_train.shape[1] ???
@@ -110,6 +119,7 @@ def convert_dataset_to_tf_dataset(x_train, y_train):
 
 
 def convert_vl_dataset_to_tf_dataset(x_train, y_train):
+    from tensorflow import data, TensorSpec, as_dtype
     dataset = data.Dataset.from_generator(
         lambda: zip(x_train, y_train),
         output_signature=(
@@ -122,7 +132,9 @@ def convert_vl_dataset_to_tf_dataset(x_train, y_train):
 
 
 def learn_with_rnn(dataset):
+    from keras import layers, models, callbacks, losses, optimizers
     # 1. BUILD RNN ARCHITECTURE:
+
     def expand_dimension(x):
         from tensorflow import reshape
         return reshape(x, [None, None, x.shape[0]])
@@ -176,6 +188,7 @@ def learn_with_rnn(dataset):
 
 
 def learn_with_rnn_not_using_datasets(x_train, y_train):
+    from keras import layers, models
     model = models.Sequential(
         [
             layers.LSTM(units=64, activation='tanh', input_shape=(None, 1)),
@@ -190,4 +203,4 @@ def learn_with_rnn_not_using_datasets(x_train, y_train):
 if __name__ == '__main__':
     pulses, effects = generate_effect_simulation(sample_plot=False,
                                                  max_pulse=False)
-    all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_vl_training_set(pulses, effects)
+    all_x, all_y = prepare_vl_training_set(pulses, effects)
