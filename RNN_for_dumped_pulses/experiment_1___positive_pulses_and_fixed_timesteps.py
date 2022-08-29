@@ -3,6 +3,8 @@ A sample RNN to learn superposition of pulses that dump over
 """
 import os
 from datetime import datetime
+import json
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -11,22 +13,25 @@ from matplotlib import pyplot as plt
 from RNN_for_dumped_pulses.settings import (
     LOG_FILENAME,
     CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME,
-    SAVED_RNN_DIR)
+    CONFIG_FILE, SAVED_RNN_DIR
+)
+from RNN_for_dumped_pulses.parameters import *
 
 from tensorflow import data, TensorSpec, as_dtype
 from keras import layers, models, callbacks, losses, optimizers
 
-# ***** parameters for pulses' generation
-N = 50000  # number of pulses generated (data points)
-MPH = 10  # max pulse height
-SL = MPH   # sequence length: number of time steps passed each time to the RNN
-RANDOM_LEN = True   # sequences are created with random length between SL and 2*SL
-MAX_PULSE_TO_PLOT = 200
-# ***** parameters for RNN
-TRAIN_FRACTION = 0.8
-EPOCHS = 20  # 5 is for demo purpose. Set this parameter to 1000 for a real (long) run
-BATCH_SIZE = 256
-INITIAL_LEARNING_RATE = 5 * 1e-5
+
+# todo: let's try ConfigParser too...
+RNN_INFO_FOLDER = SAVED_RNN_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
+os.makedirs(RNN_INFO_FOLDER, exist_ok=True)
+# load parameters:
+with open(CONFIG_FILE, encoding='utf-8') as f:
+    parameters = json.load(f)
+for p, v in parameters.items():
+    exec(f'{p}={v}')
+# save parameters:
+shutil.copyfile(src=CONFIG_FILE, dst=RNN_INFO_FOLDER / 'config.json')
+del f, parameters, p, v
 
 
 def create_dumping_pulse(n: int,
@@ -165,13 +170,11 @@ def learn_with_rnn(dataset):
                   metrics=metrics)
 
     # 2. SET TRAINING PARAMETERS AND CALLBACKS:
-    rnn_info_folder = SAVED_RNN_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
-    os.makedirs(rnn_info_folder, exist_ok=True)
     reduce_lr = callbacks.ReduceLROnPlateau(monitor='loss', factor=0.3,
                                             patience=5, min_lr=1e-9,
                                             verbose=1, mode='min', min_delta=0.3)
-    csv_logger = callbacks.CSVLogger(rnn_info_folder / LOG_FILENAME, append=True)
-    checkpoint_path = rnn_info_folder / CHECKPOINT_SUBFOLDER / LOCAL_CHECKPOINT_FILENAME
+    csv_logger = callbacks.CSVLogger(RNN_INFO_FOLDER / LOG_FILENAME, append=True)
+    checkpoint_path = RNN_INFO_FOLDER / CHECKPOINT_SUBFOLDER / LOCAL_CHECKPOINT_FILENAME
     cp_callback = callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         verbose=1,
@@ -190,7 +193,7 @@ def learn_with_rnn(dataset):
 
     # 4. SAVE THE MODEL
     # todo: save also the configuration used (number of samples, N epochs, etc.) to a json
-    model.save(rnn_info_folder)
+    model.save(RNN_INFO_FOLDER)
     return history
     # todo: add use of tensorboard
     # todo: evaluate with the test set now!!
