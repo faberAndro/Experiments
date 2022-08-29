@@ -1,7 +1,9 @@
 """
 A sample RNN to learn superposition of dumping pulses
+Note: SL must be at least equal to MPH, to make the problem mathematically solvable
 """
 import os
+import pathlib
 from datetime import datetime
 import json
 import shutil
@@ -17,11 +19,8 @@ from RNN_for_dumped_pulses.settings import (
 )
 from RNN_for_dumped_pulses.config_example import *
 
-from tensorflow import data, TensorSpec, as_dtype
+from tensorflow import data
 from keras import layers, models, callbacks, losses, optimizers
-
-# todo: see if we can use the tensorflow method in the post for saving and loading, without having to do things
-#  directly with the keras framework.
 
 # todo: let's try ConfigParser too...
 RNN_INFO_FOLDER = SAVED_RNN_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
@@ -93,10 +92,12 @@ def prepare_training_set(x, y,
     timesteps will be equal to sl
     We will then have a bunch of sl-length arrays
 
-    :param variable_len:
-    :param sl:
-    :param x:
-    :param y:
+    :param x: pulses
+    :param y: effects
+    :param sl: the number of pulses from a single input sequence. They are the minimum number of pulses
+        mathematically necessary to predict the effect.
+    :param variable_len: if True, pulses' inputs will have variable length between 'sl' and '2*sl',
+        plus they will be 0-left-padded. If False, every sequence will be 'sl'-length
     :return:
     """
     from sklearn.model_selection import train_test_split
@@ -134,28 +135,14 @@ def prepare_training_set(x, y,
 def convert_dataset_to_tf_dataset(x_train, y_train):
     dataset = data.Dataset.from_tensor_slices((x_train, y_train))
     dataset = dataset.batch(batch_size=BATCH_SIZE)
-    # todo: is this working with x_train.shape[1] ???
     prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[1], reshuffle_each_iteration=True)
-    return prepared_dataset
-
-
-def convert_vl_dataset_to_tf_dataset(x_train, y_train):
-    dataset = data.Dataset.from_generator(
-        lambda: zip(x_train, y_train),
-        output_signature=(
-            TensorSpec([None, ], dtype=as_dtype(x_train[0].dtype)),
-            TensorSpec([], dtype=as_dtype(y_train.dtype))
-        )
-    )
-    prepared_dataset = dataset.shuffle(buffer_size=x_train.shape[0], reshuffle_each_iteration=True)
     return prepared_dataset
 
 
 def learn_with_rnn(dataset):
     # 1. BUILD RNN ARCHITECTURE:
     def expand_dimension(x):
-        from tensorflow import expand_dims, reshape
-        # return reshape(x, [None, None, x.shape[0]])
+        from tensorflow import expand_dims
         return expand_dims(x, axis=-1)
 
     model = models.Sequential(
@@ -196,17 +183,18 @@ def learn_with_rnn(dataset):
                         )
 
     # 4. SAVE THE MODEL
-    # todo: save also the configuration used (number of samples, N epochs, etc.) to a json
     model.save(RNN_INFO_FOLDER)
     return history
+    # todo: see if we can use the tensorflow method in the post for saving and loading, without having to do things
+    #  directly with the keras framework.
     # todo: add use of tensorboard
     # todo: evaluate with the test set now!!
-    # todo: fix the bug to save the model!
 
 
-def use_saved_model(folder):
+def use_saved_model(subfolder: pathlib.Path):
+    folder = SAVED_RNN_DIR / subfolder
     model = models.load_model(folder)
-    history = pd.read_csv(folder + '/' + LOG_FILENAME)
+    history = pd.read_csv(folder / LOG_FILENAME)
     plt.plot(history.epoch, history.mae)
     return model
 
@@ -226,7 +214,9 @@ def predict_value(sequence: list,
 if __name__ == '__main__':
     pulses, effects = generate_effect_simulation(sample_plot=False,
                                                  max_pulse=False)
-    # plt.plot(effects)
+
+    if PLOT_EFFECTS:
+        plt.plot(effects)
     all_x, all_y, X_train, X_test, Y_train, Y_test = prepare_training_set(pulses, effects,
                                                                           variable_len=True)
     this_dataset = convert_dataset_to_tf_dataset(X_train, Y_train)
