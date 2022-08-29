@@ -1,5 +1,5 @@
 """
-A sample RNN to learn superposition of pulses that dump over
+A sample RNN to learn superposition of dumping pulses
 """
 import os
 from datetime import datetime
@@ -15,11 +15,13 @@ from RNN_for_dumped_pulses.settings import (
     CHECKPOINT_SUBFOLDER, LOCAL_CHECKPOINT_FILENAME,
     CONFIG_FILE, SAVED_RNN_DIR
 )
-from RNN_for_dumped_pulses.parameters import *
+from RNN_for_dumped_pulses.config_example import *
 
 from tensorflow import data, TensorSpec, as_dtype
 from keras import layers, models, callbacks, losses, optimizers
 
+# todo: see if we can use the tensorflow method in the post for saving and loading, without having to do things
+#  directly with the keras framework.
 
 # todo: let's try ConfigParser too...
 RNN_INFO_FOLDER = SAVED_RNN_DIR / f"RNN_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
@@ -83,7 +85,9 @@ def generate_effect_simulation(**kwargs):
     return pulses_train, influx
 
 
-def prepare_training_set(x, y, sl: int = SL, variable_len: bool = False):
+def prepare_training_set(x, y,
+                         sl: int = SL,
+                         variable_len: bool = False):
     """
     Prepare the training sample of shape (Batch_dim, time_steps, 1)
     timesteps will be equal to sl
